@@ -12,7 +12,7 @@ A citizen-built reference implementation of the framework the Government of Indi
 
 On 20 May 2026, the *Economic Times* reported that the **Ministry of Electronics and IT (MeitY)** has been holding extensive industry consultations on a concept it calls **"Law-to-Code"** — translating Digital Personal Data Protection Act 2023 provisions into machine-executable algorithms.
 
-The article, *"Coded Compliance: Centre is Eyeing 'Law-to-code' to AI-proof Data Law"* by Himanshi Lohchab and Subhayan Chakraborty (*Economic Times*, 20 May 2026), reports that these consultations have been ongoing for approximately a month and form part of MeitY's broader response to the rapid advance of frontier AI systems. The article is searchable in the Economic Times archives at [economictimes.indiatimes.com](https://economictimes.indiatimes.com).
+The article, *"Coded Compliance: Centre is Eyeing 'Law-to-code' to AI-proof Data Law"* by Himanshi Lohchab and Subhayan Chakraborty (*Economic Times*, 20 May 2026 — [link](https://economictimes.indiatimes.com/tech/technology/coded-compliance-centre-is-eyeing-law-to-code-to-ai-proof-data-law/articleshow/131209144.cms)), reports that these consultations have been ongoing for approximately a month and form part of MeitY's broader response to the rapid advance of frontier AI systems. It also describes a proposed implementation pathway — including a sandbox where developers can test compliance before deployment, and the use of coded standards by the Data Protection Board for adjudicating violations.
 
 Quoting the article directly:
 
