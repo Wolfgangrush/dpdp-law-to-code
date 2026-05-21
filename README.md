@@ -4,13 +4,15 @@
 
 A citizen-built reference implementation of the framework the Government of India has begun publicly exploring.
 
+**Read this in:** [English](README.md) · [हिन्दी](translations/README.hi.md) · [मराठी](translations/README.mr.md) · [বাংলা](translations/README.bn.md) · [தமிழ்](translations/README.ta.md) · [తెలుగు](translations/README.te.md) · [ಕನ್ನಡ](translations/README.kn.md) · [മലയാളം](translations/README.ml.md) · [ગુજરાતી](translations/README.gu.md) · [ਪੰਜਾਬੀ](translations/README.pa.md) · [اردو](translations/README.ur.md)
+
 ---
 
 ## Why this exists — the MeitY signal
 
 On 20 May 2026, the *Economic Times* reported that the **Ministry of Electronics and IT (MeitY)** has been holding extensive industry consultations on a concept it calls **"Law-to-Code"** — translating Digital Personal Data Protection Act 2023 provisions into machine-executable algorithms.
 
-The article, *"Coded Compliance: Centre is Eyeing 'Law-to-code' to AI-proof Data Law"* by Himanshi Lohchab and Subhayan Chakraborty, reports that these consultations have been ongoing for approximately a month and form part of MeitY's broader response to the rapid advance of frontier AI systems.
+The article, *"Coded Compliance: Centre is Eyeing 'Law-to-code' to AI-proof Data Law"* by Himanshi Lohchab and Subhayan Chakraborty (*Economic Times*, 20 May 2026), reports that these consultations have been ongoing for approximately a month and form part of MeitY's broader response to the rapid advance of frontier AI systems. The article is searchable in the Economic Times archives at [economictimes.indiatimes.com](https://economictimes.indiatimes.com).
 
 Quoting the article directly:
 
