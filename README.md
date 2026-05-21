@@ -12,7 +12,7 @@ A citizen-built reference implementation of the framework the Government of Indi
 
 On 20 May 2026, the *Economic Times* reported that the **Ministry of Electronics and IT (MeitY)** has been holding extensive industry consultations on a concept it calls **"Law-to-Code"** — translating Digital Personal Data Protection Act 2023 provisions into machine-executable algorithms.
 
-The article, *"Coded Compliance: Centre is Eyeing 'Law-to-code' to AI-proof Data Law"* by Himanshi Lohchab and Subhayan Chakraborty (*Economic Times*, 20 May 2026 — [link](https://economictimes.indiatimes.com/tech/technology/coded-compliance-centre-is-eyeing-law-to-code-to-ai-proof-data-law/articleshow/131209144.cms)), reports that these consultations have been ongoing for approximately a month and form part of MeitY's broader response to the rapid advance of frontier AI systems. It also describes a proposed implementation pathway — including a sandbox where developers can test compliance before deployment, and the use of coded standards by the Data Protection Board for adjudicating violations.
+The article, *"Coded Compliance: Centre is Eyeing 'Law-to-code' to AI-proof Data Law"* by Himanshi Lohchab and Subhayan Chakraborty (*Economic Times*, 20 May 2026 — [link](https://economictimes.indiatimes.com/tech/technology/coded-compliance-centre-is-eyeing-law-to-code-to-ai-proof-data-law/articleshow/131209144.cms)), reports that these consultations have been ongoing for approximately a month and form part of MeitY's broader response to the rapid advance of frontier AI systems. A government official quoted in the piece characterises the proposal as *"a relatively new concept that's been suggested, and we are looking into it"* — placing the initiative at the consultation stage, not at any formal commitment stage.
 
 Quoting the article directly:
 
@@ -27,7 +27,7 @@ The applications MeitY's consultations have publicly identified include:
 - Auto-deletion workflows when retention windows lapse
 - Compliance-by-design enforcement embedded directly in production systems
 
-A formal MeitY framework on Law-to-Code is reportedly under preparation. Based on the consultation timelines named in the article and the pace at which government technical frameworks are typically released for public comment, a published framework is plausibly **6 to 12 months away**.
+No formal MeitY framework on Law-to-Code has been committed to in the public record yet — the article reports consultations and ministerial interest, but the named official describes the concept itself as *"relatively new"* and *"being looked into."* Based on typical Indian government consultation-to-publication timelines for a technical framework of this scope, a published framework is plausibly **6 to 18 months away or longer**.
 
 **This repository is one citizen's response to the question MeitY has placed before the public.** It is not a competing proposal. It is not a critique. It is a working, runnable, openly-licensed reference implementation — published in the hope that it accelerates and grounds the conversation that the Government of India has begun.
 
