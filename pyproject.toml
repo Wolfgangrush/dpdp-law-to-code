@@ -10,7 +10,7 @@ readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.10"
 authors = [
-    {name = "Wolfgang Rush"}
+    {name = "Rushikesh R. Mahajan (wolfgang_rush)"}
 ]
 keywords = ["dpdp", "india", "privacy", "compliance", "law-to-code", "data-protection"]
 classifiers = [
