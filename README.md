@@ -1,3 +1,18 @@
+<div align="center">
+  <img src="docs/banner.png" width="820"/>
+  
+  **DPDP Act 2023, Sections 5–16 — as runnable Python.**
+
+  Visit the live site: [wolfgangrush.github.io](https://wolfgangrush.github.io)
+</div>
+
+<div align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"/></a>
+  <img src="https://img.shields.io/badge/tests-407-brightgreen" alt="407 tests"/>
+  <img src="https://img.shields.io/badge/CLI%20|%20Library%20|%20AI--assistant%20ready-blue" alt="CLI | Library | AI-assistant ready"/>
+</div>
+
+
 # dpdp-law-to-code
 
 **India's Digital Personal Data Protection Act 2023 — as runnable Python. MIT · ₹0 · local-first.**
