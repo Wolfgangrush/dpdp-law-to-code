@@ -20,6 +20,7 @@ from dpdp.types import ChildRecord
 
 # ─── helpers ───────────────────────────────────────────────────────────────
 
+
 def _compliant_child() -> ChildRecord:
     """A fully compliant child processing scenario."""
     return ChildRecord(
@@ -47,6 +48,7 @@ def _non_compliant_child() -> ChildRecord:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 9(1) — verifiable parental consent
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_sec9_1_pass_parental_consent_obtained():
     """Edutech platform obtains verifiable parental consent for 14yo."""
@@ -89,6 +91,7 @@ def test_sec9_1_master_fails_when_consent_missing():
 # Sec 9(1) proviso — disability + lawful guardian
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_sec9_1_proviso_not_triggered_by_default():
     """Proviso not triggered when Data Principal is not a person with disability."""
     record = _compliant_child()
@@ -100,7 +103,9 @@ def test_sec9_1_proviso_not_triggered_by_default():
 def test_sec9_1_proviso_not_triggered_no_lawful_guardian():
     """Person with disability but no lawful guardian — proviso not triggered."""
     record = _compliant_child()
-    r = check_disability_proviso(record, is_person_with_disability=True, has_lawful_guardian=False)
+    r = check_disability_proviso(
+        record, is_person_with_disability=True, has_lawful_guardian=False
+    )
     assert r.compliant is True
     assert "not triggered" in r.reason
 
@@ -114,7 +119,9 @@ def test_sec9_1_proviso_pass_with_guardian_consent():
         is_targeted_advertising=False,
         is_likely_to_cause_detrimental_effect=False,
     )
-    r = check_disability_proviso(record, is_person_with_disability=True, has_lawful_guardian=True)
+    r = check_disability_proviso(
+        record, is_person_with_disability=True, has_lawful_guardian=True
+    )
     assert r.compliant is True
     assert "verifiable lawful guardian consent obtained" in r.reason
 
@@ -128,7 +135,9 @@ def test_sec9_1_proviso_fail_no_guardian_consent():
         is_targeted_advertising=False,
         is_likely_to_cause_detrimental_effect=False,
     )
-    r = check_disability_proviso(record, is_person_with_disability=True, has_lawful_guardian=True)
+    r = check_disability_proviso(
+        record, is_person_with_disability=True, has_lawful_guardian=True
+    )
     assert r.compliant is False
     assert "lawful guardian" in r.reason
 
@@ -136,6 +145,7 @@ def test_sec9_1_proviso_fail_no_guardian_consent():
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 9(2) — detrimental effect on child's well-being
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_sec9_2_pass_no_detrimental_effect():
     """Processing does not harm child's well-being."""
@@ -177,6 +187,7 @@ def test_sec9_2_master_includes_detrimental_check():
 # Sec 9(3) — tracking prohibition
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_sec9_3_tracking_pass():
     """No behavioural tracking of child."""
     record = _compliant_child()
@@ -202,6 +213,7 @@ def test_sec9_3_tracking_fail():
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 9(3) — targeted advertising prohibition
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_sec9_3_ads_pass():
     """No targeted advertising directed at child."""
@@ -243,6 +255,7 @@ def test_sec9_3_both_tracking_and_ads_fail():
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 9(4) — class exemption
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_sec9_4_exemption_applies():
     """Data Fiduciary falls within Central Govt exemption notification."""
@@ -286,6 +299,7 @@ def test_sec9_4_master_short_circuits():
 # Sec 9(5) — lowered age threshold notification
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_sec9_5_no_notification_default():
     """No lowered-age notification — default 18-year threshold stands."""
     record = _compliant_child()
@@ -324,6 +338,7 @@ def test_sec9_5_master_exempts_tracking_and_ads():
 # ═══════════════════════════════════════════════════════════════════════════
 # Master — age threshold (adult Data Principals)
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_master_adult_not_applicable():
     """18yo — Sec 9 does not apply, master returns compliant=True."""
@@ -372,13 +387,16 @@ def test_master_17yo_sec9_applies():
 # Master — fully compliant child processing
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_master_all_pass():
     """All Sec 9 obligations satisfied — fully compliant child processing."""
     record = _compliant_child()
     r = check_child_processing(record)
     assert r.compliant is True
     assert "all sec 9" in r.reason.lower()
-    assert len(r.sub_results) >= 4  # consent, disability proviso, detrimental, tracking, ads
+    assert (
+        len(r.sub_results) >= 4
+    )  # consent, disability proviso, detrimental, tracking, ads
 
 
 def test_master_all_fail():
@@ -410,6 +428,7 @@ def test_master_sub_results_contains_all_clauses():
 # ═══════════════════════════════════════════════════════════════════════════
 # InvalidInputError
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_invalid_input_master():
     """Master raises InvalidInputError for non-ChildRecord input."""
@@ -470,6 +489,7 @@ def test_invalid_input_disability_proviso():
 # ═══════════════════════════════════════════════════════════════════════════
 # ComplianceResult bool coercion
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_compliance_result_bool_pass():
     """Compliant result coerces to True."""

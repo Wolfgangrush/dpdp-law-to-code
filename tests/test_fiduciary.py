@@ -30,6 +30,7 @@ DAY = 86_400
 
 # ─── helpers ───────────────────────────────────────────────────────────────
 
+
 def _good_erasure() -> ErasureContext:
     return ErasureContext(
         consent_withdrawn=True,
@@ -54,6 +55,7 @@ def _good_breach() -> BreachRecord:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 8(1) — fiduciary accountability regardless of agreement
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_sec8_1_pass():
     """Data Fiduciary acknowledges accountability regardless of agreement to contrary."""
@@ -103,6 +105,7 @@ def test_sec8_1_fail_processor_on_behalf_not_processing():
 # Sec 8(2) — processor engagement only under valid contract
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_sec8_2_pass():
     """Processor engaged under valid contract."""
     r = check_processor_contract(processor_engaged=True, has_valid_contract=True)
@@ -124,6 +127,7 @@ def test_sec8_2_fail():
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 8(3) — accuracy, completeness, consistency
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_sec8_3_pass():
     """Data used for decision — all three quality dimensions met."""
@@ -190,6 +194,7 @@ def test_sec8_3_fail_partial_not_complete():
 # Sec 8(4) — technical + organisational measures for compliance
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_sec8_4_pass():
     """Both technical and organisational measures in place."""
     r = check_compliance_measures(
@@ -224,6 +229,7 @@ def test_sec8_4_fail_both():
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 8(5) — reasonable security safeguards (₹250cr penalty trigger)
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_sec8_5_pass():
     """All seven security safeguard dimensions met."""
@@ -293,6 +299,7 @@ def test_sec8_5_fail_all():
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 8(6) — breach notification (preserved implementation)
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_sec8_6_pass():
     """Both Board and affected Data Principals notified within 72 hours."""
@@ -370,6 +377,7 @@ def test_sec8_6_invalid_input():
 # Sec 8(7)(a) — erase on consent withdrawal or purpose served
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_sec8_7_a_pass():
     """Consent withdrawn, no retention requirement, fiduciary erased."""
     r = check_erasure_on_withdrawal(_good_erasure())
@@ -437,6 +445,7 @@ def test_sec8_7_a_invalid_input():
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 8(7)(b) — cause Data Processor to erase
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_sec8_7_b_pass():
     """Fiduciary erased and caused processor to erase."""
@@ -506,6 +515,7 @@ def test_sec8_7_b_invalid_input():
 # Sec 8(8) — publish DPO / authorised person business contact
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_sec8_8_pass():
     """DPO contact published in prescribed manner."""
     r = check_dpo_contact_publication(
@@ -540,6 +550,7 @@ def test_sec8_8_fail():
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 8(9) — effective grievance redressal mechanism
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_sec8_9_pass():
     """Effective grievance mechanism established, accessible to Data Principals."""
@@ -592,6 +603,7 @@ def test_sec8_9_fail_not_accessible():
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 8(10) — respond to grievances within prescribed period (30-day heuristic)
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_sec8_10_pass():
     """Grievance responded to within 30-day prescribed period."""
@@ -654,6 +666,7 @@ def test_sec8_10_custom_resolution_period():
 # Sec 8(11) — Central Government may notify additional obligations
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_sec8_11_pass_no_obligations():
     """No additional obligations notified — Sec 8(11) not triggered."""
     r = check_additional_obligations(
@@ -700,6 +713,7 @@ def test_sec8_11_fail():
 # ═══════════════════════════════════════════════════════════════════════════
 # Master compliance aggregator — check_fiduciary_compliance
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_master_compliance_pass():
     """All Sec 8 obligations met with fully compliant parameters."""
@@ -781,7 +795,6 @@ def test_master_compliance_fail_erasure():
     )
     assert r.compliant is False
     sec8_7a = [s for s in r.sub_results if s.section == "Sec 8(7)(a)"]
-    sec8_7b = [s for s in r.sub_results if s.section == "Sec 8(7)(b)"]
     assert not sec8_7a[0].compliant
 
 

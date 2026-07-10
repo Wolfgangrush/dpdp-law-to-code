@@ -56,6 +56,7 @@ from dpdp.types import ComplianceResult, LegitimateUseCase, LegitimateUseRecord
 # Sec 7(a) — Voluntary provision for specified purpose
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def check_sec_7_a(
     is_personal_data_voluntarily_provided: bool,
     purpose_matches_voluntary_provision: bool = True,
@@ -86,6 +87,7 @@ def check_sec_7_a(
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 7(b) — State subsidy / benefit / service / certificate / licence / permit
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_sec_7_b_i(
     is_state_function: bool,
@@ -155,17 +157,24 @@ def check_sec_7_b(
             citation="DPDP Act 2023, Sec 7(b)",
         )
 
-    sub_i = check_sec_7_b_i(is_state_function=is_state_function, has_prior_consent=has_prior_consent)
-    sub_ii = check_sec_7_b_ii(is_state_function=is_state_function, data_from_notified_database=data_from_notified_database)
+    sub_i = check_sec_7_b_i(
+        is_state_function=is_state_function, has_prior_consent=has_prior_consent
+    )
+    sub_ii = check_sec_7_b_ii(
+        is_state_function=is_state_function,
+        data_from_notified_database=data_from_notified_database,
+    )
 
     # Sec 7(b) satisfied if EITHER sub-clause (i) OR (ii) pathway is met
     either_pathway = sub_i.compliant or sub_ii.compliant
     return ComplianceResult(
         compliant=either_pathway,
         section="Sec 7(b)",
-        reason=("State subsidy/benefit/service/certificate/licence/permit — at least one pathway satisfied"
-                if either_pathway
-                else "Sec 7(b) requires either prior consent pathway (i) or notified-database pathway (ii) — neither satisfied"),
+        reason=(
+            "State subsidy/benefit/service/certificate/licence/permit — at least one pathway satisfied"
+            if either_pathway
+            else "Sec 7(b) requires either prior consent pathway (i) or notified-database pathway (ii) — neither satisfied"
+        ),
         citation="DPDP Act 2023, Sec 7(b)",
         sub_results=[sub_i, sub_ii],
     )
@@ -174,6 +183,7 @@ def check_sec_7_b(
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 7(c) — State function under law / sovereignty / integrity / security
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_sec_7_c(is_state_function: bool) -> ComplianceResult:
     """Sec 7(c) — performance by State of any function under law or in interest of sovereignty, integrity or security of India."""
@@ -196,6 +206,7 @@ def check_sec_7_c(is_state_function: bool) -> ComplianceResult:
 # Sec 7(d) — Legal disclosure to State
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def check_sec_7_d(has_statutory_disclosure_obligation: bool) -> ComplianceResult:
     """Sec 7(d) — disclosure to State or instrumentality under statutory obligation; voluntary disclosure does not qualify."""
     if not has_statutory_disclosure_obligation:
@@ -216,6 +227,7 @@ def check_sec_7_d(has_statutory_disclosure_obligation: bool) -> ComplianceResult
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 7(e) — Court judgment or order compliance
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_sec_7_e(has_judgment_or_order: bool) -> ComplianceResult:
     """Sec 7(e) — compliance with judgment or order issued under any law, including foreign contractual/civil judgments."""
@@ -238,6 +250,7 @@ def check_sec_7_e(has_judgment_or_order: bool) -> ComplianceResult:
 # Sec 7(f) — Medical emergency
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def check_sec_7_f(threatens_life_or_health: bool) -> ComplianceResult:
     """Sec 7(f) — responding to a medical emergency involving threat to life or direct threat to health of Data Principal or any other individual."""
     if not threatens_life_or_health:
@@ -258,6 +271,7 @@ def check_sec_7_f(threatens_life_or_health: bool) -> ComplianceResult:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 7(g) — Epidemic / outbreak / public health threat
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_sec_7_g(is_government_health_measure: bool) -> ComplianceResult:
     """Sec 7(g) — medical treatment or health services during epidemic, outbreak of disease or threat to public health; government-level intervention only."""
@@ -280,6 +294,7 @@ def check_sec_7_g(is_government_health_measure: bool) -> ComplianceResult:
 # Sec 7(h) — Disaster / breakdown of public order
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def check_sec_7_h(is_government_disaster_measure: bool) -> ComplianceResult:
     """Sec 7(h) — measures to ensure safety or provide assistance during disaster or breakdown of public order; government measures only."""
     if not is_government_disaster_measure:
@@ -300,6 +315,7 @@ def check_sec_7_h(is_government_disaster_measure: bool) -> ComplianceResult:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 7(i) — Employment purposes
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_sec_7_i(
     is_employment_related: bool,
@@ -332,6 +348,7 @@ def check_sec_7_i(
 # Master dispatcher — check_legitimate_use(LegitimateUseRecord)
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def check_legitimate_use(record: LegitimateUseRecord) -> ComplianceResult:
     """Sec 7 — validate a processing activity asserted under one of the 9 exhaustive legitimate uses."""
     if not isinstance(record, LegitimateUseRecord):
@@ -351,16 +368,25 @@ def check_legitimate_use(record: LegitimateUseRecord) -> ComplianceResult:
             # PROPOSED FIELDS: has_prior_consent_for_state_subsidy, data_from_notified_database — default False
         )
 
-    if hasattr(LegitimateUseCase, 'STATE_FUNCTION_UNDER_LAW') and case == LegitimateUseCase.STATE_FUNCTION_UNDER_LAW:
+    if (
+        hasattr(LegitimateUseCase, "STATE_FUNCTION_UNDER_LAW")
+        and case == LegitimateUseCase.STATE_FUNCTION_UNDER_LAW
+    ):
         return check_sec_7_c(is_state_function=record.is_state_function)
 
-    if hasattr(LegitimateUseCase, 'LEGAL_DISCLOSURE_TO_STATE') and case == LegitimateUseCase.LEGAL_DISCLOSURE_TO_STATE:
+    if (
+        hasattr(LegitimateUseCase, "LEGAL_DISCLOSURE_TO_STATE")
+        and case == LegitimateUseCase.LEGAL_DISCLOSURE_TO_STATE
+    ):
         return check_sec_7_d(
             # PROPOSED FIELD: has_statutory_disclosure_obligation — use has_other_lawful_basis as weak proxy
             has_statutory_disclosure_obligation=record.has_other_lawful_basis,
         )
 
-    if hasattr(LegitimateUseCase, 'COURT_JUDGMENT_COMPLIANCE') and case == LegitimateUseCase.COURT_JUDGMENT_COMPLIANCE:
+    if (
+        hasattr(LegitimateUseCase, "COURT_JUDGMENT_COMPLIANCE")
+        and case == LegitimateUseCase.COURT_JUDGMENT_COMPLIANCE
+    ):
         return check_sec_7_e(
             # PROPOSED FIELD: has_judgment_or_order — use has_other_lawful_basis as weak proxy
             has_judgment_or_order=record.has_other_lawful_basis,

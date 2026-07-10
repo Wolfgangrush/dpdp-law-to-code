@@ -38,6 +38,7 @@ from dpdp.types import ComplianceResult, RightsRequest, RightType
 # preserved existing helpers
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def _section_for(right: RightType) -> str:
     return {
         RightType.ACCESS_AND_INFORMATION: "Sec 11",
@@ -84,7 +85,10 @@ def check_rights_response(request: RightsRequest) -> ComplianceResult:
 # Sec 11 — Right to access information about personal data
 # ═══════════════════════════════════════════════════════════════════════════
 
-def check_sec_11_1_a_summary(summary_provided: bool, processing_activities_disclosed: bool) -> ComplianceResult:
+
+def check_sec_11_1_a_summary(
+    summary_provided: bool, processing_activities_disclosed: bool
+) -> ComplianceResult:
     """Sec 11(1)(a) — right to obtain summary of personal data + processing activities."""
     compliant = summary_provided and processing_activities_disclosed
     return ComplianceResult(
@@ -93,13 +97,17 @@ def check_sec_11_1_a_summary(summary_provided: bool, processing_activities_discl
         reason=(
             "summary of personal data and processing activities provided"
             if compliant
-            else _missing_11_1_a_reason(summary_provided, processing_activities_disclosed)
+            else _missing_11_1_a_reason(
+                summary_provided, processing_activities_disclosed
+            )
         ),
         citation="DPDP Act 2023, Sec 11(1)(a)",
     )
 
 
-def _missing_11_1_a_reason(summary_provided: bool, processing_activities_disclosed: bool) -> str:
+def _missing_11_1_a_reason(
+    summary_provided: bool, processing_activities_disclosed: bool
+) -> str:
     missing: list[str] = []
     if not summary_provided:
         missing.append("summary of personal data not provided")
@@ -108,7 +116,9 @@ def _missing_11_1_a_reason(summary_provided: bool, processing_activities_disclos
     return "; ".join(missing)
 
 
-def check_sec_11_1_b_identities(identities_listed: bool, generic_third_party_label_used: bool) -> ComplianceResult:
+def check_sec_11_1_b_identities(
+    identities_listed: bool, generic_third_party_label_used: bool
+) -> ComplianceResult:
     """Sec 11(1)(b) — right to identities of Fiduciaries/Processors with whom data shared."""
     if not identities_listed:
         return ComplianceResult(
@@ -132,7 +142,9 @@ def check_sec_11_1_b_identities(identities_listed: bool, generic_third_party_lab
     )
 
 
-def check_sec_11_1_b_description(description_of_shared_data_provided: bool) -> ComplianceResult:
+def check_sec_11_1_b_description(
+    description_of_shared_data_provided: bool,
+) -> ComplianceResult:
     """Sec 11(1)(b) — right to description of data shared with other Fiduciaries/Processors."""
     return ComplianceResult(
         compliant=description_of_shared_data_provided,
@@ -146,7 +158,9 @@ def check_sec_11_1_b_description(description_of_shared_data_provided: bool) -> C
     )
 
 
-def check_sec_11_1_c_other_info(other_prescribed_info_provided: bool) -> ComplianceResult:
+def check_sec_11_1_c_other_info(
+    other_prescribed_info_provided: bool,
+) -> ComplianceResult:
     """Sec 11(1)(c) — right to other prescribed information related to processing."""
     # delegated to DPDP Rules 2025 — manner prescribed
     return ComplianceResult(
@@ -161,7 +175,9 @@ def check_sec_11_1_c_other_info(other_prescribed_info_provided: bool) -> Complia
     )
 
 
-def check_sec_11_2_law_enforcement_exemption(sharing_authorised_by_law: bool) -> ComplianceResult:
+def check_sec_11_2_law_enforcement_exemption(
+    sharing_authorised_by_law: bool,
+) -> ComplianceResult:
     """Sec 11(2) — 11(1)(b)/(c) do not apply to sharing authorised by law."""
     return ComplianceResult(
         compliant=True,
@@ -187,33 +203,49 @@ def check_sec_11(
     """Sec 11 — master aggregator for right to access information about personal data."""
     sub_results: list[ComplianceResult] = []
 
-    sub_results.append(check_sec_11_1_a_summary(summary_provided, processing_activities_disclosed))
+    sub_results.append(
+        check_sec_11_1_a_summary(summary_provided, processing_activities_disclosed)
+    )
 
     if sharing_authorised_by_law:
-        sub_results.append(ComplianceResult(
-            compliant=True,
-            section="Sec 11(1)(b)",
-            reason="identities not disclosed per Sec 11(2) — sharing authorised by law",
-            citation="DPDP Act 2023, Sec 11(1)(b)",
-        ))
-        sub_results.append(ComplianceResult(
-            compliant=True,
-            section="Sec 11(1)(b)",
-            reason="description of shared data not disclosed per Sec 11(2) — sharing authorised by law",
-            citation="DPDP Act 2023, Sec 11(1)(b)",
-        ))
-        sub_results.append(ComplianceResult(
-            compliant=True,
-            section="Sec 11(1)(c)",
-            reason="other prescribed info not disclosed per Sec 11(2) — sharing authorised by law",
-            citation="DPDP Act 2023, Sec 11(1)(c)",
-        ))
+        sub_results.append(
+            ComplianceResult(
+                compliant=True,
+                section="Sec 11(1)(b)",
+                reason="identities not disclosed per Sec 11(2) — sharing authorised by law",
+                citation="DPDP Act 2023, Sec 11(1)(b)",
+            )
+        )
+        sub_results.append(
+            ComplianceResult(
+                compliant=True,
+                section="Sec 11(1)(b)",
+                reason="description of shared data not disclosed per Sec 11(2) — sharing authorised by law",
+                citation="DPDP Act 2023, Sec 11(1)(b)",
+            )
+        )
+        sub_results.append(
+            ComplianceResult(
+                compliant=True,
+                section="Sec 11(1)(c)",
+                reason="other prescribed info not disclosed per Sec 11(2) — sharing authorised by law",
+                citation="DPDP Act 2023, Sec 11(1)(c)",
+            )
+        )
     else:
-        sub_results.append(check_sec_11_1_b_identities(identities_listed, generic_third_party_label_used))
-        sub_results.append(check_sec_11_1_b_description(description_of_shared_data_provided))
+        sub_results.append(
+            check_sec_11_1_b_identities(
+                identities_listed, generic_third_party_label_used
+            )
+        )
+        sub_results.append(
+            check_sec_11_1_b_description(description_of_shared_data_provided)
+        )
         sub_results.append(check_sec_11_1_c_other_info(other_prescribed_info_provided))
 
-    sub_results.append(check_sec_11_2_law_enforcement_exemption(sharing_authorised_by_law))
+    sub_results.append(
+        check_sec_11_2_law_enforcement_exemption(sharing_authorised_by_law)
+    )
 
     all_compliant = all(r.compliant for r in sub_results)
     return ComplianceResult(
@@ -233,7 +265,10 @@ def check_sec_11(
 # Sec 12 — Right to correction, completion, updating, and erasure
 # ═══════════════════════════════════════════════════════════════════════════
 
-def check_sec_12_1_correction(correction_requested: bool, correction_provided: bool) -> ComplianceResult:
+
+def check_sec_12_1_correction(
+    correction_requested: bool, correction_provided: bool
+) -> ComplianceResult:
     """Sec 12(1) — right to correction of personal data."""
     if not correction_requested:
         return ComplianceResult(
@@ -254,7 +289,9 @@ def check_sec_12_1_correction(correction_requested: bool, correction_provided: b
     )
 
 
-def check_sec_12_1_completion(completion_requested: bool, completion_provided: bool) -> ComplianceResult:
+def check_sec_12_1_completion(
+    completion_requested: bool, completion_provided: bool
+) -> ComplianceResult:
     """Sec 12(1) — right to completion of incomplete personal data."""
     if not completion_requested:
         return ComplianceResult(
@@ -275,7 +312,9 @@ def check_sec_12_1_completion(completion_requested: bool, completion_provided: b
     )
 
 
-def check_sec_12_1_updating(updating_requested: bool, updating_provided: bool) -> ComplianceResult:
+def check_sec_12_1_updating(
+    updating_requested: bool, updating_provided: bool
+) -> ComplianceResult:
     """Sec 12(1) — right to updating of personal data."""
     if not updating_requested:
         return ComplianceResult(
@@ -296,7 +335,12 @@ def check_sec_12_1_updating(updating_requested: bool, updating_provided: bool) -
     )
 
 
-def check_sec_12_1_erasure(erasure_requested: bool, erasure_provided: bool, retention_required_by_law: bool = False, retention_necessary_for_purpose: bool = False) -> ComplianceResult:
+def check_sec_12_1_erasure(
+    erasure_requested: bool,
+    erasure_provided: bool,
+    retention_required_by_law: bool = False,
+    retention_necessary_for_purpose: bool = False,
+) -> ComplianceResult:
     """Sec 12(1) — right to erasure of personal data."""
     if not erasure_requested:
         return ComplianceResult(
@@ -334,7 +378,11 @@ def check_sec_12_1_erasure(erasure_requested: bool, erasure_provided: bool, rete
     )
 
 
-def check_sec_12_2_a_correction_duty(correction_requested: bool, fiduciary_corrected: bool, data_was_inaccurate_or_misleading: bool) -> ComplianceResult:
+def check_sec_12_2_a_correction_duty(
+    correction_requested: bool,
+    fiduciary_corrected: bool,
+    data_was_inaccurate_or_misleading: bool,
+) -> ComplianceResult:
     """Sec 12(2)(a) — Fiduciary must correct inaccurate/misleading data on request."""
     if not correction_requested:
         return ComplianceResult(
@@ -362,7 +410,9 @@ def check_sec_12_2_a_correction_duty(correction_requested: bool, fiduciary_corre
     )
 
 
-def check_sec_12_2_b_completion_duty(completion_requested: bool, fiduciary_completed: bool, data_was_incomplete: bool) -> ComplianceResult:
+def check_sec_12_2_b_completion_duty(
+    completion_requested: bool, fiduciary_completed: bool, data_was_incomplete: bool
+) -> ComplianceResult:
     """Sec 12(2)(b) — Fiduciary must complete incomplete data on request."""
     if not completion_requested:
         return ComplianceResult(
@@ -390,7 +440,9 @@ def check_sec_12_2_b_completion_duty(completion_requested: bool, fiduciary_compl
     )
 
 
-def check_sec_12_2_c_updating_duty(updating_requested: bool, fiduciary_updated: bool) -> ComplianceResult:
+def check_sec_12_2_c_updating_duty(
+    updating_requested: bool, fiduciary_updated: bool
+) -> ComplianceResult:
     """Sec 12(2)(c) — Fiduciary must update personal data on request."""
     if not updating_requested:
         return ComplianceResult(
@@ -411,7 +463,12 @@ def check_sec_12_2_c_updating_duty(updating_requested: bool, fiduciary_updated: 
     )
 
 
-def check_sec_12_3_erasure_duty(erasure_requested: bool, fiduciary_erased: bool, retention_required_by_law: bool, retention_necessary_for_purpose: bool) -> ComplianceResult:
+def check_sec_12_3_erasure_duty(
+    erasure_requested: bool,
+    fiduciary_erased: bool,
+    retention_required_by_law: bool,
+    retention_necessary_for_purpose: bool,
+) -> ComplianceResult:
     """Sec 12(3) — Fiduciary must erase on request unless retention required by law or necessary for specified purpose."""
     if not erasure_requested:
         return ComplianceResult(
@@ -468,11 +525,25 @@ def check_sec_12(
         check_sec_12_1_correction(correction_requested, correction_provided),
         check_sec_12_1_completion(completion_requested, completion_provided),
         check_sec_12_1_updating(updating_requested, updating_provided),
-        check_sec_12_1_erasure(erasure_requested, erasure_provided, retention_required_by_law, retention_necessary_for_purpose),
-        check_sec_12_2_a_correction_duty(correction_requested, correction_provided, data_was_inaccurate_or_misleading),
-        check_sec_12_2_b_completion_duty(completion_requested, completion_provided, data_was_incomplete),
+        check_sec_12_1_erasure(
+            erasure_requested,
+            erasure_provided,
+            retention_required_by_law,
+            retention_necessary_for_purpose,
+        ),
+        check_sec_12_2_a_correction_duty(
+            correction_requested, correction_provided, data_was_inaccurate_or_misleading
+        ),
+        check_sec_12_2_b_completion_duty(
+            completion_requested, completion_provided, data_was_incomplete
+        ),
         check_sec_12_2_c_updating_duty(updating_requested, updating_provided),
-        check_sec_12_3_erasure_duty(erasure_requested, erasure_provided, retention_required_by_law, retention_necessary_for_purpose),
+        check_sec_12_3_erasure_duty(
+            erasure_requested,
+            erasure_provided,
+            retention_required_by_law,
+            retention_necessary_for_purpose,
+        ),
     ]
 
     all_compliant = all(r.compliant for r in sub_results)
@@ -492,6 +563,7 @@ def check_sec_12(
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 13 — Right of grievance redressal
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_sec_13_1_mechanism_available(mechanism_available: bool) -> ComplianceResult:
     """Sec 13(1) — readily available means of grievance redressal provided by Fiduciary or Consent Manager."""
@@ -541,7 +613,9 @@ def check_sec_13_2_response_period(request: RightsRequest) -> ComplianceResult:
     )
 
 
-def check_sec_13_3_exhaustion_required(grievance_filed_with_fiduciary_first: bool) -> ComplianceResult:
+def check_sec_13_3_exhaustion_required(
+    grievance_filed_with_fiduciary_first: bool,
+) -> ComplianceResult:
     """Sec 13(3) — Data Principal must exhaust internal grievance mechanism before approaching Board."""
     return ComplianceResult(
         compliant=grievance_filed_with_fiduciary_first,
@@ -588,7 +662,10 @@ def check_sec_13(
 # Sec 14 — Right to nominate
 # ═══════════════════════════════════════════════════════════════════════════
 
-def check_sec_14_1_nomination(nominee_designated: bool, manner_prescribed_followed: bool) -> ComplianceResult:
+
+def check_sec_14_1_nomination(
+    nominee_designated: bool, manner_prescribed_followed: bool
+) -> ComplianceResult:
     """Sec 14(1) — right to nominate another individual to exercise rights in case of death/incapacity."""
     # delegated to DPDP Rules 2025 — manner prescribed
     compliant = nominee_designated and manner_prescribed_followed
@@ -614,7 +691,9 @@ def check_sec_14_1_nomination(nominee_designated: bool, manner_prescribed_follow
     )
 
 
-def check_sec_14_2_incapacity_definition(incapacity_meets_definition: bool) -> ComplianceResult:
+def check_sec_14_2_incapacity_definition(
+    incapacity_meets_definition: bool,
+) -> ComplianceResult:
     """Sec 14(2) — definition of incapacity for nomination purposes (death, mental incapacity, persistent vegetative state, etc.)."""
     return ComplianceResult(
         compliant=incapacity_meets_definition,

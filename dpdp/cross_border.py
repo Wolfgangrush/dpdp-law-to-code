@@ -82,9 +82,7 @@ def check_sec_16_2_sectoral_law(transfer: CrossBorderTransfer) -> ComplianceResu
     return ComplianceResult(
         compliant=True,
         section="Sec 16(2)",
-        reason=(
-            "no sectoral-law restriction asserted — Sec 16(2) does not apply"
-        ),
+        reason=("no sectoral-law restriction asserted — Sec 16(2) does not apply"),
         citation="DPDP Act 2023, Sec 16(2)",
     )
 

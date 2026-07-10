@@ -51,7 +51,9 @@ class TestSec15A:
         assert f"₹{_DUTY_PENALTY_CAP_INR:,}" in result.reason
 
     def test_invalid_input_raises(self):
-        with pytest.raises(InvalidInputError, match="complies_with_applicable_laws must be bool"):
+        with pytest.raises(
+            InvalidInputError, match="complies_with_applicable_laws must be bool"
+        ):
             check_sec_15_a(None)  # type: ignore[arg-type]
 
 
@@ -111,7 +113,9 @@ class TestSec15C:
 
     def test_both_c_breaches_aggregated(self):
         """Both false particulars AND suppressed information — both reported."""
-        duty = _duty(submitted_false_particulars=True, suppressed_material_information=True)
+        duty = _duty(
+            submitted_false_particulars=True, suppressed_material_information=True
+        )
         result = check_sec_15_c(duty)
         assert not result.compliant
         assert len(result.sub_results) == 2
@@ -186,7 +190,10 @@ class TestSec15E:
         assert f"₹{_DUTY_PENALTY_CAP_INR:,}" in result.reason
 
     def test_invalid_input_raises(self):
-        with pytest.raises(InvalidInputError, match="furnishes_verifiably_authentic_information must be bool"):
+        with pytest.raises(
+            InvalidInputError,
+            match="furnishes_verifiably_authentic_information must be bool",
+        ):
             check_sec_15_e(None)  # type: ignore[arg-type]
 
 
@@ -253,7 +260,11 @@ class TestCheckDataPrincipalDutyMaster:
         assert result.compliant
         assert "no Sec 15 duty breach" in result.reason
         # Verify Sec 15(a) sub-result exists and passed
-        sec_15_a_results = [r for r in result.sub_results if isinstance(r, ComplianceResult) and r.section == "Sec 15(a)"]
+        sec_15_a_results = [
+            r
+            for r in result.sub_results
+            if isinstance(r, ComplianceResult) and r.section == "Sec 15(a)"
+        ]
         assert len(sec_15_a_results) == 0  # sub_results only populated on failure
 
     def test_sec_15_e_kwarg_defaults_to_pass(self):
@@ -267,15 +278,25 @@ class TestCheckDataPrincipalDutyMaster:
         duty = _duty()
         result = check_data_principal_duty(duty, complies_with_applicable_laws=False)
         assert not result.compliant
-        sec_15_a_fails = [r for r in result.sub_results if r.section == "Sec 15(a)" and not r.compliant]
+        sec_15_a_fails = [
+            r
+            for r in result.sub_results
+            if r.section == "Sec 15(a)" and not r.compliant
+        ]
         assert len(sec_15_a_fails) == 1
 
     def test_sec_15_e_explicit_fail_propagates_to_master(self):
         """Explicit Sec 15(e) failure appears in master sub_results."""
         duty = _duty()
-        result = check_data_principal_duty(duty, furnishes_verifiably_authentic_information=False)
+        result = check_data_principal_duty(
+            duty, furnishes_verifiably_authentic_information=False
+        )
         assert not result.compliant
-        sec_15_e_fails = [r for r in result.sub_results if r.section == "Sec 15(e)" and not r.compliant]
+        sec_15_e_fails = [
+            r
+            for r in result.sub_results
+            if r.section == "Sec 15(e)" and not r.compliant
+        ]
         assert len(sec_15_e_fails) == 1
 
     def test_invalid_input_raises(self):
@@ -293,7 +314,13 @@ class TestCheckDataPrincipalDutyMaster:
         duty = _duty(impersonated_another_person=True)
         result = check_data_principal_duty(duty)
         sections = {r.section for r in result.sub_results}
-        assert sections == {"Sec 15(a)", "Sec 15(b)", "Sec 15(c)", "Sec 15(d)", "Sec 15(e)"}
+        assert sections == {
+            "Sec 15(a)",
+            "Sec 15(b)",
+            "Sec 15(c)",
+            "Sec 15(d)",
+            "Sec 15(e)",
+        }
 
     def test_return_type_is_complianceresult(self):
         result = check_data_principal_duty(_duty())
@@ -302,4 +329,6 @@ class TestCheckDataPrincipalDutyMaster:
     def test_complianceresult_bool_interface(self):
         """ComplianceResult truthiness matches compliant field."""
         assert bool(check_data_principal_duty(_duty()))
-        assert not bool(check_data_principal_duty(_duty(impersonated_another_person=True)))
+        assert not bool(
+            check_data_principal_duty(_duty(impersonated_another_person=True))
+        )

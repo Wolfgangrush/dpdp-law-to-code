@@ -22,7 +22,7 @@ counsel before relying on outputs for regulatory or contentious matters.
 
 from __future__ import annotations
 
-from dpdp.exceptions import InvalidInputError, StatuteNotEncodedError
+from dpdp.exceptions import InvalidInputError
 from dpdp.types import ComplianceResult, SDFContext
 
 # TODO v0.2 — expand SDFContext (dpdp/types.py) with per-sub-clause fields
@@ -39,7 +39,9 @@ from dpdp.types import ComplianceResult, SDFContext
 # documented proxy fallback (typically has_appointed_dpo).
 
 _THRESHOLD_HEURISTIC = 0.6  # self-assessment aid — only Central Govt notification under Sec 10(1) is binding
-_FACTOR_THRESHOLD = 0.5  # per-factor elevated-risk threshold for 10(1)(a)-(f) individual checks
+_FACTOR_THRESHOLD = (
+    0.5  # per-factor elevated-risk threshold for 10(1)(a)-(f) individual checks
+)
 
 
 def _validate_context(context: SDFContext) -> None:
@@ -50,6 +52,7 @@ def _validate_context(context: SDFContext) -> None:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 10(1)(a) — volume + sensitivity of personal data processed
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_sec_10_1_a(context: SDFContext) -> ComplianceResult:
     """Sec 10(1)(a) — volume and sensitivity of personal data processed."""
@@ -67,7 +70,7 @@ def check_sec_10_1_a(context: SDFContext) -> ComplianceResult:
             f"combined {combined:.2f} >= {_FACTOR_THRESHOLD} — elevated SDF concern"
             if elevated
             else f"volume signal {volume_signal:.2f}, sensitivity {context.sensitivity_of_personal_data:.2f} — "
-                 f"combined {combined:.2f} < {_FACTOR_THRESHOLD} — not an elevated concern"
+            f"combined {combined:.2f} < {_FACTOR_THRESHOLD} — not an elevated concern"
         ),
         citation="DPDP Act 2023, Sec 10(1)(a)",
     )
@@ -76,6 +79,7 @@ def check_sec_10_1_a(context: SDFContext) -> ComplianceResult:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 10(1)(b) — risk to rights of Data Principal
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_sec_10_1_b(context: SDFContext) -> ComplianceResult:
     """Sec 10(1)(b) — risk to the rights of Data Principal."""
@@ -100,6 +104,7 @@ def check_sec_10_1_b(context: SDFContext) -> ComplianceResult:
 # Sec 10(1)(c) — potential impact on sovereignty + integrity of India
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def check_sec_10_1_c(context: SDFContext) -> ComplianceResult:
     """Sec 10(1)(c) — potential impact on the sovereignty and integrity of India."""
     _validate_context(context)
@@ -122,6 +127,7 @@ def check_sec_10_1_c(context: SDFContext) -> ComplianceResult:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 10(1)(d) — risk to electoral democracy
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_sec_10_1_d(context: SDFContext) -> ComplianceResult:
     """Sec 10(1)(d) — risk to electoral democracy."""
@@ -146,6 +152,7 @@ def check_sec_10_1_d(context: SDFContext) -> ComplianceResult:
 # Sec 10(1)(e) — security of the State
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def check_sec_10_1_e(context: SDFContext) -> ComplianceResult:
     """Sec 10(1)(e) — security of the State."""
     _validate_context(context)
@@ -169,6 +176,7 @@ def check_sec_10_1_e(context: SDFContext) -> ComplianceResult:
 # Sec 10(1)(f) — public order
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def check_sec_10_1_f(context: SDFContext) -> ComplianceResult:
     """Sec 10(1)(f) — public order."""
     _validate_context(context)
@@ -191,6 +199,7 @@ def check_sec_10_1_f(context: SDFContext) -> ComplianceResult:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 10(1) — composite SDF threshold assessment (aggregates (a)-(f))
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def assess_sdf_threshold(context: SDFContext) -> ComplianceResult:
     """Sec 10(1) — heuristic SDF-likelihood assessment aggregating six Central-Govt-assessed criteria."""
@@ -243,6 +252,7 @@ def assess_sdf_threshold(context: SDFContext) -> ComplianceResult:
 # Sec 10(2)(a) — SDF shall appoint a Data Protection Officer
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def check_sec_10_2_a_dpo(context: SDFContext) -> ComplianceResult:
     """Sec 10(2)(a) — appoint DPO who represents SDF, is based in India, accountable to Board, and is grievance contact."""
     _validate_context(context)
@@ -251,57 +261,85 @@ def check_sec_10_2_a_dpo(context: SDFContext) -> ComplianceResult:
 
     # Sec 10(2)(a)(i) — DPO represents SDF under the Act
     # proxy: has_appointed_dpo until dpo_represents_sdf_under_act is added to SDFContext
-    dpo_represents = getattr(context, 'dpo_represents_sdf_under_act', context.has_appointed_dpo)
-    sub.append(ComplianceResult(
-        compliant=dpo_represents,
-        section="Sec 10(2)(a)(i)",
-        reason=("DPO represents SDF under the provisions of this Act" if dpo_represents
-                else "Sec 10(2)(a)(i) requires DPO to represent the SDF under the provisions of this Act"),
-        citation="DPDP Act 2023, Sec 10(2)(a)(i)",
-    ))
+    dpo_represents = getattr(
+        context, "dpo_represents_sdf_under_act", context.has_appointed_dpo
+    )
+    sub.append(
+        ComplianceResult(
+            compliant=dpo_represents,
+            section="Sec 10(2)(a)(i)",
+            reason=(
+                "DPO represents SDF under the provisions of this Act"
+                if dpo_represents
+                else "Sec 10(2)(a)(i) requires DPO to represent the SDF under the provisions of this Act"
+            ),
+            citation="DPDP Act 2023, Sec 10(2)(a)(i)",
+        )
+    )
 
     # Sec 10(2)(a)(ii) — DPO based in India
     # proxy: has_appointed_dpo until dpo_based_in_india is added to SDFContext
-    dpo_in_india = getattr(context, 'dpo_based_in_india', context.has_appointed_dpo)
-    sub.append(ComplianceResult(
-        compliant=dpo_in_india,
-        section="Sec 10(2)(a)(ii)",
-        reason=("DPO based in India" if dpo_in_india
-                else "Sec 10(2)(a)(ii) requires DPO to be based in India — ₹150 crore penalty exposure"),
-        citation="DPDP Act 2023, Sec 10(2)(a)(ii)",
-    ))
+    dpo_in_india = getattr(context, "dpo_based_in_india", context.has_appointed_dpo)
+    sub.append(
+        ComplianceResult(
+            compliant=dpo_in_india,
+            section="Sec 10(2)(a)(ii)",
+            reason=(
+                "DPO based in India"
+                if dpo_in_india
+                else "Sec 10(2)(a)(ii) requires DPO to be based in India — ₹150 crore penalty exposure"
+            ),
+            citation="DPDP Act 2023, Sec 10(2)(a)(ii)",
+        )
+    )
 
     # Sec 10(2)(a)(iii) — DPO accountable to Board of Directors
     # proxy: has_appointed_dpo until dpo_accountable_to_board is added to SDFContext
-    dpo_accountable = getattr(context, 'dpo_accountable_to_board', context.has_appointed_dpo)
-    sub.append(ComplianceResult(
-        compliant=dpo_accountable,
-        section="Sec 10(2)(a)(iii)",
-        reason=("DPO is an individual responsible to the Board of Directors or similar governing body"
+    dpo_accountable = getattr(
+        context, "dpo_accountable_to_board", context.has_appointed_dpo
+    )
+    sub.append(
+        ComplianceResult(
+            compliant=dpo_accountable,
+            section="Sec 10(2)(a)(iii)",
+            reason=(
+                "DPO is an individual responsible to the Board of Directors or similar governing body"
                 if dpo_accountable
-                else "Sec 10(2)(a)(iii) requires DPO to be responsible to the Board of Directors or similar governing body"),
-        citation="DPDP Act 2023, Sec 10(2)(a)(iii)",
-    ))
+                else "Sec 10(2)(a)(iii) requires DPO to be responsible to the Board of Directors or similar governing body"
+            ),
+            citation="DPDP Act 2023, Sec 10(2)(a)(iii)",
+        )
+    )
 
     # Sec 10(2)(a)(iv) — DPO is point of contact for grievance redressal
     # proxy: has_appointed_dpo until dpo_is_grievance_contact is added to SDFContext
-    dpo_grievance = getattr(context, 'dpo_is_grievance_contact', context.has_appointed_dpo)
-    sub.append(ComplianceResult(
-        compliant=dpo_grievance,
-        section="Sec 10(2)(a)(iv)",
-        reason=("DPO is the point of contact for the grievance redressal mechanism"
+    dpo_grievance = getattr(
+        context, "dpo_is_grievance_contact", context.has_appointed_dpo
+    )
+    sub.append(
+        ComplianceResult(
+            compliant=dpo_grievance,
+            section="Sec 10(2)(a)(iv)",
+            reason=(
+                "DPO is the point of contact for the grievance redressal mechanism"
                 if dpo_grievance
-                else "Sec 10(2)(a)(iv) requires DPO to be the point of contact for the grievance redressal mechanism"),
-        citation="DPDP Act 2023, Sec 10(2)(a)(iv)",
-    ))
+                else "Sec 10(2)(a)(iv) requires DPO to be the point of contact for the grievance redressal mechanism"
+            ),
+            citation="DPDP Act 2023, Sec 10(2)(a)(iv)",
+        )
+    )
 
     all_pass = all(r.compliant for r in sub)
     failed = [r for r in sub if not r.compliant]
     return ComplianceResult(
         compliant=all_pass,
         section="Sec 10(2)(a)",
-        reason=("all DPO appointment requirements satisfied" if all_pass
-                else f"{len(failed)} DPO requirement(s) failed: " + "; ".join(r.reason for r in failed)),
+        reason=(
+            "all DPO appointment requirements satisfied"
+            if all_pass
+            else f"{len(failed)} DPO requirement(s) failed: "
+            + "; ".join(r.reason for r in failed)
+        ),
         citation="DPDP Act 2023, Sec 10(2)(a)",
         sub_results=sub,
     )
@@ -311,6 +349,7 @@ def check_sec_10_2_a_dpo(context: SDFContext) -> ComplianceResult:
 # Sec 10(2)(b) — SDF shall appoint an independent data auditor
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def check_sec_10_2_b_auditor(context: SDFContext) -> ComplianceResult:
     """Sec 10(2)(b) — appoint an independent data auditor to evaluate compliance with the Act."""
     _validate_context(context)
@@ -318,9 +357,11 @@ def check_sec_10_2_b_auditor(context: SDFContext) -> ComplianceResult:
     return ComplianceResult(
         compliant=context.has_appointed_data_auditor,
         section="Sec 10(2)(b)",
-        reason=("independent data auditor appointed to evaluate compliance with the Act"
-                if context.has_appointed_data_auditor
-                else "Sec 10(2)(b) requires SDF to appoint an independent data auditor who shall evaluate compliance"),
+        reason=(
+            "independent data auditor appointed to evaluate compliance with the Act"
+            if context.has_appointed_data_auditor
+            else "Sec 10(2)(b) requires SDF to appoint an independent data auditor who shall evaluate compliance"
+        ),
         citation="DPDP Act 2023, Sec 10(2)(b)",
     )
 
@@ -329,6 +370,7 @@ def check_sec_10_2_b_auditor(context: SDFContext) -> ComplianceResult:
 # Sec 10(2)(c) — periodic DPIA + periodic audit + other prescribed measures
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def check_sec_10_2_c_dpia(context: SDFContext) -> ComplianceResult:
     """Sec 10(2)(c) — undertake periodic Data Protection Impact Assessment and periodic audit."""
     _validate_context(context)
@@ -336,42 +378,59 @@ def check_sec_10_2_c_dpia(context: SDFContext) -> ComplianceResult:
     sub: list[ComplianceResult] = []
 
     # Sec 10(2)(c)(i) — periodic DPIA
-    sub.append(ComplianceResult(
-        compliant=context.conducts_periodic_dpia,
-        section="Sec 10(2)(c)(i)",
-        reason=("periodic Data Protection Impact Assessment undertaken"
+    sub.append(
+        ComplianceResult(
+            compliant=context.conducts_periodic_dpia,
+            section="Sec 10(2)(c)(i)",
+            reason=(
+                "periodic Data Protection Impact Assessment undertaken"
                 if context.conducts_periodic_dpia
-                else "Sec 10(2)(c)(i) requires SDF to undertake periodic Data Protection Impact Assessment"),
-        citation="DPDP Act 2023, Sec 10(2)(c)(i)",
-    ))
+                else "Sec 10(2)(c)(i) requires SDF to undertake periodic Data Protection Impact Assessment"
+            ),
+            citation="DPDP Act 2023, Sec 10(2)(c)(i)",
+        )
+    )
 
     # Sec 10(2)(c)(ii) — periodic audit
     # proxy: conducts_periodic_dpia until conducts_periodic_audit is added to SDFContext
-    periodic_audit = getattr(context, 'conducts_periodic_audit', context.conducts_periodic_dpia)
-    sub.append(ComplianceResult(
-        compliant=periodic_audit,
-        section="Sec 10(2)(c)(ii)",
-        reason=("periodic audit undertaken" if periodic_audit
-                else "Sec 10(2)(c)(ii) requires SDF to undertake periodic audit"),
-        citation="DPDP Act 2023, Sec 10(2)(c)(ii)",
-    ))
+    periodic_audit = getattr(
+        context, "conducts_periodic_audit", context.conducts_periodic_dpia
+    )
+    sub.append(
+        ComplianceResult(
+            compliant=periodic_audit,
+            section="Sec 10(2)(c)(ii)",
+            reason=(
+                "periodic audit undertaken"
+                if periodic_audit
+                else "Sec 10(2)(c)(ii) requires SDF to undertake periodic audit"
+            ),
+            citation="DPDP Act 2023, Sec 10(2)(c)(ii)",
+        )
+    )
 
     # Sec 10(2)(c)(iii) — such other measures as may be prescribed
     # delegated to DPDP Rules 2025 — manner prescribed
-    sub.append(ComplianceResult(
-        compliant=True,
-        section="Sec 10(2)(c)(iii)",
-        reason="other measures as may be prescribed — delegated to DPDP Rules 2025; no measure currently notified",
-        citation="DPDP Act 2023, Sec 10(2)(c)(iii)",
-    ))
+    sub.append(
+        ComplianceResult(
+            compliant=True,
+            section="Sec 10(2)(c)(iii)",
+            reason="other measures as may be prescribed — delegated to DPDP Rules 2025; no measure currently notified",
+            citation="DPDP Act 2023, Sec 10(2)(c)(iii)",
+        )
+    )
 
     all_pass = all(r.compliant for r in sub)
     failed = [r for r in sub if not r.compliant]
     return ComplianceResult(
         compliant=all_pass,
         section="Sec 10(2)(c)",
-        reason=("periodic DPIA, audit, and other prescribed measures undertaken" if all_pass
-                else f"{len(failed)} DPIA/audit requirement(s) failed: " + "; ".join(r.reason for r in failed)),
+        reason=(
+            "periodic DPIA, audit, and other prescribed measures undertaken"
+            if all_pass
+            else f"{len(failed)} DPIA/audit requirement(s) failed: "
+            + "; ".join(r.reason for r in failed)
+        ),
         citation="DPDP Act 2023, Sec 10(2)(c)",
         sub_results=sub,
     )
@@ -381,19 +440,23 @@ def check_sec_10_2_c_dpia(context: SDFContext) -> ComplianceResult:
 # Sec 10(2)(d) — other measures including such other measures as prescribed
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def check_sec_10_2_d_other_measures(context: SDFContext) -> ComplianceResult:
     """Sec 10(2)(d) — other measures as may be prescribed (catch-all delegation to Rules)."""
     _validate_context(context)
 
     # proxy: complies_with_other_prescribed_measures if the field exists, else True
     # delegated to DPDP Rules 2025 — manner prescribed
-    other_complied = getattr(context, 'complies_with_other_prescribed_measures', True)
+    other_complied = getattr(context, "complies_with_other_prescribed_measures", True)
 
     return ComplianceResult(
         compliant=other_complied,
         section="Sec 10(2)(d)",
-        reason=("other prescribed measures complied with — delegated to DPDP Rules 2025" if other_complied
-                else "Sec 10(2)(d) requires SDF to undertake other measures as may be prescribed — delegated to DPDP Rules 2025"),
+        reason=(
+            "other prescribed measures complied with — delegated to DPDP Rules 2025"
+            if other_complied
+            else "Sec 10(2)(d) requires SDF to undertake other measures as may be prescribed — delegated to DPDP Rules 2025"
+        ),
         citation="DPDP Act 2023, Sec 10(2)(d)",
     )
 
@@ -401,6 +464,7 @@ def check_sec_10_2_d_other_measures(context: SDFContext) -> ComplianceResult:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 10(2) — composite SDF obligations aggregator (a)-(d)
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_sdf_obligations(context: SDFContext) -> ComplianceResult:
     """Sec 10(2) — validate SDF obligations: DPO, auditor, DPIA, other measures."""
@@ -417,8 +481,12 @@ def check_sdf_obligations(context: SDFContext) -> ComplianceResult:
     return ComplianceResult(
         compliant=all_pass,
         section="Sec 10(2)",
-        reason=("all SDF obligations satisfied" if all_pass
-                else f"{len(failed)} SDF obligation(s) failed: " + "; ".join(r.reason for r in failed)),
+        reason=(
+            "all SDF obligations satisfied"
+            if all_pass
+            else f"{len(failed)} SDF obligation(s) failed: "
+            + "; ".join(r.reason for r in failed)
+        ),
         citation="DPDP Act 2023, Sec 10(2)",
         sub_results=sub,
     )

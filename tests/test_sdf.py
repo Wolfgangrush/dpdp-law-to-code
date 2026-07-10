@@ -27,10 +27,11 @@ from dpdp.sdf import (
     check_sec_10_2_c_dpia,
     check_sec_10_2_d_other_measures,
 )
-from dpdp.types import ComplianceResult, SDFContext
+from dpdp.types import SDFContext
 
 
 # ─── helpers ─────────────────────────────────────────────────────────────
+
 
 def _low_risk_context(**overrides) -> SDFContext:
     """Small shop with 100 records — unlikely SDF."""
@@ -74,6 +75,7 @@ def _high_risk_context(**overrides) -> SDFContext:
 # Sec 10(1)(a) — volume + sensitivity
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec10_1_a:
     def test_high_volume_high_sensitivity_elevated(self):
         """Entity processing 50M health records → elevated volume + sensitivity concern."""
@@ -92,14 +94,19 @@ class TestSec10_1_a:
 
     def test_high_volume_low_sensitivity(self):
         """High volume but low sensitivity — volume signal dominates."""
-        ctx = _low_risk_context(volume_of_personal_data_processed=8_000_000, sensitivity_of_personal_data=0.1)
+        ctx = _low_risk_context(
+            volume_of_personal_data_processed=8_000_000,
+            sensitivity_of_personal_data=0.1,
+        )
         result = check_sec_10_1_a(ctx)
         # volume_signal = 8M/10M = 0.8, sensitivity = 0.1, combined = max(0.8, 0.1) = 0.8 >= 0.5
         assert not result.compliant
 
     def test_low_volume_high_sensitivity(self):
         """Low volume but high sensitivity — sensitivity dominates."""
-        ctx = _low_risk_context(volume_of_personal_data_processed=100, sensitivity_of_personal_data=0.9)
+        ctx = _low_risk_context(
+            volume_of_personal_data_processed=100, sensitivity_of_personal_data=0.9
+        )
         result = check_sec_10_1_a(ctx)
         # volume_signal = 100/10M ≈ 0.0, sensitivity = 0.9, combined = 0.9 >= 0.5
         assert not result.compliant
@@ -112,6 +119,7 @@ class TestSec10_1_a:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 10(1)(b) — risk to rights of Data Principals
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestSec10_1_b:
     def test_high_risk_elevated(self):
@@ -146,6 +154,7 @@ class TestSec10_1_b:
 # Sec 10(1)(c) — sovereignty + integrity of India
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec10_1_c:
     def test_high_risk_elevated(self):
         ctx = _low_risk_context(risk_to_sovereignty_or_integrity=0.7)
@@ -165,6 +174,7 @@ class TestSec10_1_c:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 10(1)(d) — electoral democracy
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestSec10_1_d:
     def test_high_risk_elevated(self):
@@ -186,6 +196,7 @@ class TestSec10_1_d:
 # Sec 10(1)(e) — security of the State
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec10_1_e:
     def test_high_risk_elevated(self):
         ctx = _low_risk_context(risk_to_state_security=0.9)
@@ -206,6 +217,7 @@ class TestSec10_1_e:
 # Sec 10(1)(f) — public order
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec10_1_f:
     def test_high_risk_elevated(self):
         ctx = _low_risk_context(risk_to_public_order=0.75)
@@ -225,6 +237,7 @@ class TestSec10_1_f:
 # ═══════════════════════════════════════════════════════════════════════════
 # assess_sdf_threshold — Sec 10(1) composite
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestAssessSdfThreshold:
     def test_50m_health_records_high_sdf_potential(self):
@@ -293,8 +306,12 @@ class TestAssessSdfThreshold:
         result = assess_sdf_threshold(ctx)
         sections = {r.section for r in result.sub_results}
         assert sections == {
-            "Sec 10(1)(a)", "Sec 10(1)(b)", "Sec 10(1)(c)",
-            "Sec 10(1)(d)", "Sec 10(1)(e)", "Sec 10(1)(f)",
+            "Sec 10(1)(a)",
+            "Sec 10(1)(b)",
+            "Sec 10(1)(c)",
+            "Sec 10(1)(d)",
+            "Sec 10(1)(e)",
+            "Sec 10(1)(f)",
         }
 
     def test_invalid_input(self):
@@ -305,6 +322,7 @@ class TestAssessSdfThreshold:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 10(2)(a) — DPO appointment (with sub-clauses (i)-(iv))
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestSec10_2_a_DPO:
     def test_dpo_appointed_all_sub_checks_pass(self):
@@ -329,8 +347,10 @@ class TestSec10_2_a_DPO:
         result = check_sec_10_2_a_dpo(ctx)
         sections = {r.section for r in result.sub_results}
         assert sections == {
-            "Sec 10(2)(a)(i)", "Sec 10(2)(a)(ii)",
-            "Sec 10(2)(a)(iii)", "Sec 10(2)(a)(iv)",
+            "Sec 10(2)(a)(i)",
+            "Sec 10(2)(a)(ii)",
+            "Sec 10(2)(a)(iii)",
+            "Sec 10(2)(a)(iv)",
         }
 
     def test_sub_clause_ii_dpo_based_in_india_failure_message(self):
@@ -344,7 +364,9 @@ class TestSec10_2_a_DPO:
     def test_sub_clause_iii_board_accountability_message(self):
         ctx = _low_risk_context(has_appointed_dpo=False)
         result = check_sec_10_2_a_dpo(ctx)
-        sub_iii = next(r for r in result.sub_results if r.section == "Sec 10(2)(a)(iii)")
+        sub_iii = next(
+            r for r in result.sub_results if r.section == "Sec 10(2)(a)(iii)"
+        )
         assert "Board of Directors" in sub_iii.reason
 
     def test_sub_clause_iv_grievance_contact_message(self):
@@ -361,6 +383,7 @@ class TestSec10_2_a_DPO:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 10(2)(b) — independent data auditor
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestSec10_2_b_Auditor:
     def test_auditor_appointed(self):
@@ -384,6 +407,7 @@ class TestSec10_2_b_Auditor:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 10(2)(c) — periodic DPIA + audit
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestSec10_2_c_DPIA:
     def test_dpia_conducted(self):
@@ -409,7 +433,9 @@ class TestSec10_2_c_DPIA:
         """Sec 10(2)(c)(iii) delegates to DPDP Rules 2025 — currently always compliant."""
         ctx = _low_risk_context(conducts_periodic_dpia=False)
         result = check_sec_10_2_c_dpia(ctx)
-        sub_iii = next(r for r in result.sub_results if r.section == "Sec 10(2)(c)(iii)")
+        sub_iii = next(
+            r for r in result.sub_results if r.section == "Sec 10(2)(c)(iii)"
+        )
         assert sub_iii.compliant
         assert "DPDP Rules 2025" in sub_iii.reason
 
@@ -421,6 +447,7 @@ class TestSec10_2_c_DPIA:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 10(2)(d) — other prescribed measures
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestSec10_2_d_OtherMeasures:
     def test_other_measures_compliant_by_default(self):
@@ -438,6 +465,7 @@ class TestSec10_2_d_OtherMeasures:
 # ═══════════════════════════════════════════════════════════════════════════
 # check_sdf_obligations — Sec 10(2) composite
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestCheckSdfObligations:
     def test_all_obligations_satisfied(self):
@@ -506,7 +534,12 @@ class TestCheckSdfObligations:
         )
         result = check_sdf_obligations(ctx)
         sections = {r.section for r in result.sub_results}
-        assert sections == {"Sec 10(2)(a)", "Sec 10(2)(b)", "Sec 10(2)(c)", "Sec 10(2)(d)"}
+        assert sections == {
+            "Sec 10(2)(a)",
+            "Sec 10(2)(b)",
+            "Sec 10(2)(c)",
+            "Sec 10(2)(d)",
+        }
 
     def test_invalid_input(self):
         with pytest.raises(InvalidInputError, match="expected SDFContext"):
@@ -516,6 +549,7 @@ class TestCheckSdfObligations:
 # ═══════════════════════════════════════════════════════════════════════════
 # DPO in US scenario — documented limitation pending SDFContext field addition
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestDpoLocationLimitation:
     """Tests documenting the current proxy limitation.
@@ -552,6 +586,7 @@ class TestDpoLocationLimitation:
 # ═══════════════════════════════════════════════════════════════════════════
 # Integration-style scenarios
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestEndToEndScenarios:
     def test_high_risk_entity_full_pipeline(self):

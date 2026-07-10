@@ -33,8 +33,12 @@ from dpdp.types import LegitimateUseCase, LegitimateUseRecord
 # Sec 7(a) — Voluntary provision for specified purpose
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_7a_pass():
-    result = check_sec_7_a(is_personal_data_voluntarily_provided=True, purpose_matches_voluntary_provision=True)
+    result = check_sec_7_a(
+        is_personal_data_voluntarily_provided=True,
+        purpose_matches_voluntary_provision=True,
+    )
     assert result.compliant is True
     assert result.section == "Sec 7(a)"
 
@@ -46,7 +50,10 @@ def test_7a_fail_not_voluntary():
 
 
 def test_7a_fail_purpose_mismatch():
-    result = check_sec_7_a(is_personal_data_voluntarily_provided=True, purpose_matches_voluntary_provision=False)
+    result = check_sec_7_a(
+        is_personal_data_voluntarily_provided=True,
+        purpose_matches_voluntary_provision=False,
+    )
     assert result.compliant is False
     assert "purpose" in result.reason.lower()
 
@@ -73,6 +80,7 @@ def test_7a_master_fail():
 # Sec 7(b)(i) — State subsidy/benefit with prior consent
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_7b_i_pass():
     result = check_sec_7_b_i(is_state_function=True, has_prior_consent=True)
     assert result.compliant is True
@@ -94,6 +102,7 @@ def test_7b_i_fail_no_prior_consent():
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 7(b)(ii) — State subsidy/benefit from notified database
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_7b_ii_pass():
     result = check_sec_7_b_ii(is_state_function=True, data_from_notified_database=True)
@@ -117,24 +126,41 @@ def test_7b_ii_fail_not_notified_database():
 # Sec 7(b) umbrella — either pathway (i) or (ii)
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_7b_umbrella_pass_via_i():
-    result = check_sec_7_b(is_state_function=True, has_prior_consent=True, data_from_notified_database=False)
+    result = check_sec_7_b(
+        is_state_function=True,
+        has_prior_consent=True,
+        data_from_notified_database=False,
+    )
     assert result.compliant is True
     assert "Sec 7(b)" in result.section
 
 
 def test_7b_umbrella_pass_via_ii():
-    result = check_sec_7_b(is_state_function=True, has_prior_consent=False, data_from_notified_database=True)
+    result = check_sec_7_b(
+        is_state_function=True,
+        has_prior_consent=False,
+        data_from_notified_database=True,
+    )
     assert result.compliant is True
 
 
 def test_7b_umbrella_fail_neither_pathway():
-    result = check_sec_7_b(is_state_function=True, has_prior_consent=False, data_from_notified_database=False)
+    result = check_sec_7_b(
+        is_state_function=True,
+        has_prior_consent=False,
+        data_from_notified_database=False,
+    )
     assert result.compliant is False
 
 
 def test_7b_umbrella_fail_private_party():
-    result = check_sec_7_b(is_state_function=False, has_prior_consent=True, data_from_notified_database=True)
+    result = check_sec_7_b(
+        is_state_function=False,
+        has_prior_consent=True,
+        data_from_notified_database=True,
+    )
     assert result.compliant is False
     assert "private" in result.reason.lower()
 
@@ -164,6 +190,7 @@ def test_7b_master_fail_private():
 # Sec 7(c) — State function under law / sovereignty / integrity / security
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_7c_pass():
     result = check_sec_7_c(is_state_function=True)
     assert result.compliant is True
@@ -179,6 +206,7 @@ def test_7c_fail_private_party():
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 7(d) — Legal disclosure to State under statutory obligation
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_7d_pass():
     result = check_sec_7_d(has_statutory_disclosure_obligation=True)
@@ -196,6 +224,7 @@ def test_7d_fail_voluntary_disclosure():
 # Sec 7(e) — Court judgment or order compliance
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_7e_pass():
     result = check_sec_7_e(has_judgment_or_order=True)
     assert result.compliant is True
@@ -211,6 +240,7 @@ def test_7e_fail_no_judgment():
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 7(f) — Medical emergency
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_7f_pass():
     result = check_sec_7_f(threatens_life_or_health=True)
@@ -246,6 +276,7 @@ def test_7f_master_fail_routine():
 # Sec 7(g) — Epidemic / outbreak / public health threat
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_7g_pass():
     result = check_sec_7_g(is_government_health_measure=True)
     assert result.compliant is True
@@ -277,6 +308,7 @@ def test_7g_master_pass():
 # Sec 7(h) — Disaster / breakdown of public order
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_7h_pass():
     result = check_sec_7_h(is_government_disaster_measure=True)
     assert result.compliant is True
@@ -302,19 +334,26 @@ def test_7h_master_pass():
 # Sec 7(i) — Employment purposes
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_7i_pass():
-    result = check_sec_7_i(is_employment_related=True, is_employer_employee_relationship=True)
+    result = check_sec_7_i(
+        is_employment_related=True, is_employer_employee_relationship=True
+    )
     assert result.compliant is True
     assert result.section == "Sec 7(i)"
 
 
 def test_7i_fail_not_employment_related():
-    result = check_sec_7_i(is_employment_related=False, is_employer_employee_relationship=True)
+    result = check_sec_7_i(
+        is_employment_related=False, is_employer_employee_relationship=True
+    )
     assert result.compliant is False
 
 
 def test_7i_fail_contractor_not_employee():
-    result = check_sec_7_i(is_employment_related=True, is_employer_employee_relationship=False)
+    result = check_sec_7_i(
+        is_employment_related=True, is_employer_employee_relationship=False
+    )
     assert result.compliant is False
     assert "employer-employee" in result.reason.lower()
 
@@ -335,6 +374,7 @@ def test_7i_master_pass():
 # Spurious claim — sales-prospect database claimed under Sec 7(i)
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_spurious_employment_claim_for_sales_prospects():
     """Sales-prospect database is NOT employment — must fail Sec 7(i) narrow guard."""
     record = LegitimateUseRecord(
@@ -351,6 +391,7 @@ def test_spurious_employment_claim_for_sales_prospects():
 # InvalidInputError
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_invalid_input_raises():
     with pytest.raises(InvalidInputError, match=r"Sec 7"):
         check_legitimate_use("not_a_record")  # type: ignore[arg-type]
@@ -364,6 +405,7 @@ def test_invalid_input_none():
 # ═══════════════════════════════════════════════════════════════════════════
 # Master dispatcher — unrecognised case
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_master_unrecognised_case():
     """A LegitimateUseCase value not matching any limb returns non-compliant."""
@@ -379,6 +421,7 @@ def test_master_unrecognised_case():
 # ═══════════════════════════════════════════════════════════════════════════
 # Citation format verification
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_citation_formats():
     assert check_sec_7_a(True, True).citation == "DPDP Act 2023, Sec 7(a)"
@@ -398,6 +441,7 @@ def test_citation_formats():
 # Narrow-construction guard: private party cannot invoke State-only limbs
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_private_party_cannot_invoke_7c():
     assert check_sec_7_c(is_state_function=False).compliant is False
 
@@ -410,8 +454,13 @@ def test_private_party_cannot_invoke_7b():
 # Sub-results aggregation
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_7b_umbrella_aggregates_sub_results():
-    result = check_sec_7_b(is_state_function=True, has_prior_consent=True, data_from_notified_database=False)
+    result = check_sec_7_b(
+        is_state_function=True,
+        has_prior_consent=True,
+        data_from_notified_database=False,
+    )
     assert len(result.sub_results) == 2
     assert result.sub_results[0].section == "Sec 7(b)(i)"
     assert result.sub_results[1].section == "Sec 7(b)(ii)"

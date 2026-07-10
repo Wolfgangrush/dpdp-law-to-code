@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
 
 
 @dataclass(frozen=True)
@@ -102,13 +101,15 @@ class LegitimateUseCase(str, Enum):
     COURT_JUDGMENT_COMPLIANCE = "sec_7_e"  # Sec 7(e)
     MEDICAL_EMERGENCY = "sec_7_f"  # Sec 7(f) — renumbered from sec_7_d in gazette
     EPIDEMIC_PUBLIC_HEALTH_EMERGENCY = "sec_7_g"  # Sec 7(g) — renumbered from sec_7_e
-    DISASTER_OR_BREAKDOWN_OF_PUBLIC_ORDER = "sec_7_h"  # Sec 7(h) — renumbered from sec_7_f
+    DISASTER_OR_BREAKDOWN_OF_PUBLIC_ORDER = (
+        "sec_7_h"  # Sec 7(h) — renumbered from sec_7_f
+    )
     EMPLOYMENT_PURPOSES = "sec_7_i"  # Sec 7(i) — renumbered from sec_7_g
 
 
 @dataclass(frozen=True)
 class LegitimateUseRecord:
-    """A processing activity claimed under one of the 7 legitimate uses."""
+    """A processing activity claimed under one of the 9 legitimate uses."""
 
     asserted_case: LegitimateUseCase
     purpose_description: str

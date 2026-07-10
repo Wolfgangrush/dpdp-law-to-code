@@ -252,11 +252,11 @@ The DPDP Act 2023, **Sec 5(3)**, requires that notice be available in English or
 
 The compliance logic itself is language-agnostic: a statute citation in Hindi, Marathi, Tamil, Bengali, Telugu, or any other Eighth Schedule language is treated identically by every checker.
 
-Translations of this README into the following languages are a v0.2 roadmap commitment and are open for community contribution:
+Translations of this README are already shipped under `translations/`:
 
-Hindi · Marathi · Bengali · Tamil · Telugu · Kannada · Malayalam · Gujarati · Punjabi · Urdu · Odia · Assamese · Sanskrit · Konkani · Kashmiri
+हिन्दी (Hindi) · मराठी (Marathi) · বাংলা (Bengali) · தமிழ் (Tamil) · తెలుగు (Telugu) · ಕನ್ನಡ (Kannada) · മലയാളം (Malayalam) · ગુજરાતી (Gujarati) · ਪੰਜਾਬੀ (Punjabi) · اردو (Urdu)
 
-Submit translations as `README.<lang>.md` (e.g. `README.hi.md`, `README.mr.md`).
+Translations into additional Eighth Schedule languages are welcome — submit as `README.<lang>.md` (e.g. `README.or.md` for Odia, `README.as.md` for Assamese).
 
 ---
 
@@ -266,7 +266,6 @@ Submit translations as `README.<lang>.md` (e.g. `README.hi.md`, `README.mr.md`).
 - Not a database integration
 - Not cloud-hosted
 - Not a live regulatory-update feed (planned v0.2+)
-- Not yet multilingual at the documentation layer (planned v0.2+, see above)
 - Not a replacement for qualified legal counsel
 - Not Sec 17/18+ (Data Protection Board structure + penalties — deferred to v0.2)
 
