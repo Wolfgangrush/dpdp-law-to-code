@@ -20,12 +20,16 @@ from dpdp.types import ConsentRecord
 
 def _good() -> ConsentRecord:
     return ConsentRecord(
-        is_free=True, is_specific=True, is_informed=True,
-        is_unconditional=True, is_unambiguous=True,
+        is_free=True,
+        is_specific=True,
+        is_informed=True,
+        is_unconditional=True,
+        is_unambiguous=True,
         has_clear_affirmative_action=True,
         is_limited_to_specified_purpose=True,
         is_withdrawable_easily=True,
-        is_pre_checked=False, is_bundled_with_unrelated_terms=False,
+        is_pre_checked=False,
+        is_bundled_with_unrelated_terms=False,
         has_infringing_provision=False,
         request_in_clear_plain_language=True,
         has_eighth_schedule_language_option=True,
@@ -35,45 +39,64 @@ def _good() -> ConsentRecord:
 
 # -- existing tests (preserved) --------------------------------------------------
 
+
 def test_all_pass():
     assert check_consent(_good()).compliant is True
 
 
 def test_pre_checked_box_fails():
-    assert not check_consent(ConsentRecord(**{**_good().__dict__, "is_pre_checked": True})).compliant
+    assert not check_consent(
+        ConsentRecord(**{**_good().__dict__, "is_pre_checked": True})
+    ).compliant
 
 
 def test_bundled_consent_fails():
-    assert not check_consent(ConsentRecord(**{**_good().__dict__, "is_bundled_with_unrelated_terms": True})).compliant
+    assert not check_consent(
+        ConsentRecord(**{**_good().__dict__, "is_bundled_with_unrelated_terms": True})
+    ).compliant
 
 
 def test_not_free_fails():
-    assert not check_consent(ConsentRecord(**{**_good().__dict__, "is_free": False})).compliant
+    assert not check_consent(
+        ConsentRecord(**{**_good().__dict__, "is_free": False})
+    ).compliant
 
 
 def test_not_specific_fails():
-    assert not check_consent(ConsentRecord(**{**_good().__dict__, "is_specific": False})).compliant
+    assert not check_consent(
+        ConsentRecord(**{**_good().__dict__, "is_specific": False})
+    ).compliant
 
 
 def test_not_informed_fails():
-    assert not check_consent(ConsentRecord(**{**_good().__dict__, "is_informed": False})).compliant
+    assert not check_consent(
+        ConsentRecord(**{**_good().__dict__, "is_informed": False})
+    ).compliant
 
 
 def test_not_unconditional_fails():
-    assert not check_consent(ConsentRecord(**{**_good().__dict__, "is_unconditional": False})).compliant
+    assert not check_consent(
+        ConsentRecord(**{**_good().__dict__, "is_unconditional": False})
+    ).compliant
 
 
 def test_not_unambiguous_fails():
-    assert not check_consent(ConsentRecord(**{**_good().__dict__, "is_unambiguous": False})).compliant
+    assert not check_consent(
+        ConsentRecord(**{**_good().__dict__, "is_unambiguous": False})
+    ).compliant
 
 
 def test_withdrawal_harder_fails():
-    assert not check_consent(ConsentRecord(**{**_good().__dict__, "is_withdrawable_easily": False})).compliant
+    assert not check_consent(
+        ConsentRecord(**{**_good().__dict__, "is_withdrawable_easily": False})
+    ).compliant
 
 
 def test_standalone_withdrawal_check():
     assert check_withdrawal_ease(_good()).compliant is True
-    assert not check_withdrawal_ease(ConsentRecord(**{**_good().__dict__, "is_withdrawable_easily": False})).compliant
+    assert not check_withdrawal_ease(
+        ConsentRecord(**{**_good().__dict__, "is_withdrawable_easily": False})
+    ).compliant
 
 
 def test_invalid_input_raises():
@@ -82,6 +105,7 @@ def test_invalid_input_raises():
 
 
 # -- Sec 6(2) infringing consent --------------------------------------------------
+
 
 def test_sec6_2_pass():
     """No infringing provision — consent is valid."""
@@ -106,6 +130,7 @@ def test_sec6_2_fail():
 
 # -- Sec 6(3) consent request presentation ----------------------------------------
 
+
 def test_sec6_3_pass():
     """All three language/DPO requirements met."""
     r = check_consent(_good())
@@ -119,12 +144,14 @@ def test_sec6_3_pass():
 
 def test_sec6_3_fail():
     """Missing clear language, Eighth Schedule option, and DPO contact."""
-    bad = ConsentRecord(**{
-        **_good().__dict__,
-        "request_in_clear_plain_language": False,
-        "has_eighth_schedule_language_option": False,
-        "dpo_contact_provided": False,
-    })
+    bad = ConsentRecord(
+        **{
+            **_good().__dict__,
+            "request_in_clear_plain_language": False,
+            "has_eighth_schedule_language_option": False,
+            "dpo_contact_provided": False,
+        }
+    )
     r = check_consent(bad)
     sec6_3 = [s for s in r.sub_results if s.section == "Sec 6(3)"]
     assert len(sec6_3) == 3
@@ -145,6 +172,7 @@ def test_sec6_3_partial_fail_clear_language():
 
 
 # -- Sec 6(5) withdrawal consequences ---------------------------------------------
+
 
 def test_sec6_5_pass():
     """Data Principal informed of consequences; pre-withdrawal processing treated as lawful."""
@@ -169,6 +197,7 @@ def test_sec6_5_partial_fail_not_informed():
 
 
 # -- Sec 6(6) cessation on withdrawal ---------------------------------------------
+
 
 def test_sec6_6_pass():
     """Data Fiduciary ceased processing and caused processors to cease after withdrawal."""
@@ -200,6 +229,7 @@ def test_sec6_6_partial_fail_df_only():
 
 # -- Sec 6(7) consent via Consent Manager -----------------------------------------
 
+
 def test_sec6_7_pass():
     """Consent not via Consent Manager — Sec 6(7) not triggered."""
     r = check_consent_via_consent_manager(False, False)
@@ -219,6 +249,7 @@ def test_sec6_7_fail():
 
 
 # -- Sec 6(8) Consent Manager accountability --------------------------------------
+
 
 def test_sec6_8_pass():
     """Consent Manager accountable to DP and acts on her behalf."""
@@ -244,6 +275,7 @@ def test_sec6_8_partial_fail_not_accountable():
 
 # -- Sec 6(9) Consent Manager registration ----------------------------------------
 
+
 def test_sec6_9_pass():
     """Consent Manager registered with the Board."""
     r = check_consent_manager_registration(True)
@@ -257,6 +289,7 @@ def test_sec6_9_fail():
 
 
 # -- Sec 6(10) burden of proof ----------------------------------------------------
+
 
 def test_sec6_10_pass():
     """All three proof elements met — burden discharged."""

@@ -46,7 +46,11 @@ SECTION_REGISTRY: dict[str, tuple[Callable[..., ComplianceResult], type, str]] =
     "5": (check_notice, NoticeRecord, "Notice"),
     "6": (check_consent, ConsentRecord, "Consent"),
     "7": (check_legitimate_use, LegitimateUseRecord, "Legitimate Uses"),
-    "8": (check_breach_notification, BreachRecord, "Data Fiduciary obligations — breach notification"),
+    "8": (
+        check_breach_notification,
+        BreachRecord,
+        "Data Fiduciary obligations — breach notification",
+    ),
     "9": (check_child_processing, ChildRecord, "Children"),
     "10": (check_sdf_obligations, SDFContext, "Significant Data Fiduciary"),
     "10-threshold": (assess_sdf_threshold, SDFContext, "SDF threshold assessment"),
@@ -72,7 +76,10 @@ def _serialize(result: ComplianceResult) -> dict[str, Any]:
 
 def cmd_check(args: argparse.Namespace) -> int:
     if args.section not in SECTION_REGISTRY:
-        print(f"error: unknown section '{args.section}'. --list-sections for options.", file=sys.stderr)
+        print(
+            f"error: unknown section '{args.section}'. --list-sections for options.",
+            file=sys.stderr,
+        )
         return 2
 
     fn, record_type, _name = SECTION_REGISTRY[args.section]
@@ -118,11 +125,21 @@ def main() -> int:
         prog="dpdp-check",
         description="DPDP Act 2023 compliance checker (v0.1). Not legal advice.",
     )
-    parser.add_argument("--version", action="version", version=f"dpdp-check {__version__}")
+    parser.add_argument(
+        "--version", action="version", version=f"dpdp-check {__version__}"
+    )
     parser.add_argument("--list-sections", dest="list_sections", action="store_true")
-    parser.add_argument("--section", help="Section key (e.g. 6, 9, 16). See --list-sections.")
-    parser.add_argument("--input", help="Path to JSON input matching the section's record schema.")
-    parser.add_argument("--json", action="store_true", help="Emit JSON output instead of human-readable.")
+    parser.add_argument(
+        "--section", help="Section key (e.g. 6, 9, 16). See --list-sections."
+    )
+    parser.add_argument(
+        "--input", help="Path to JSON input matching the section's record schema."
+    )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit JSON output instead of human-readable.",
+    )
     args = parser.parse_args()
 
     if args.list_sections:

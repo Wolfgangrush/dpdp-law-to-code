@@ -39,10 +39,11 @@ from dpdp.rights import (
     check_sec_14_1_nomination,
     check_sec_14_2_incapacity_definition,
 )
-from dpdp.types import ComplianceResult, RightsRequest, RightType
+from dpdp.types import RightsRequest, RightType
 
 
 # ─── helpers ─────────────────────────────────────────────────────────────
+
 
 def _access_request(**overrides) -> RightsRequest:
     defaults = dict(
@@ -70,15 +71,20 @@ def _grievance_request(**overrides) -> RightsRequest:
 # check_rights_response (preserved existing)
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestCheckRightsResponse:
     def test_pass_within_window(self):
-        req = _access_request(received_at_unix=1_000_000, responded_at_unix=1_000_000 + 10 * 86400)
+        req = _access_request(
+            received_at_unix=1_000_000, responded_at_unix=1_000_000 + 10 * 86400
+        )
         r = check_rights_response(req)
         assert r.compliant is True
         assert "within 30-day window" in r.reason
 
     def test_fail_exceeds_window(self):
-        req = _access_request(received_at_unix=1_000_000, responded_at_unix=1_000_000 + 40 * 86400)
+        req = _access_request(
+            received_at_unix=1_000_000, responded_at_unix=1_000_000 + 40 * 86400
+        )
         r = check_rights_response(req)
         assert r.compliant is False
         assert "exceeds 30-day window" in r.reason
@@ -100,7 +106,11 @@ class TestCheckRightsResponse:
             (RightType.GRIEVANCE_REDRESSAL, "Sec 13"),
             (RightType.NOMINATION, "Sec 14"),
         ]:
-            req = RightsRequest(right=right, received_at_unix=1_000_000, responded_at_unix=1_000_000 + 5 * 86400)
+            req = RightsRequest(
+                right=right,
+                received_at_unix=1_000_000,
+                responded_at_unix=1_000_000 + 5 * 86400,
+            )
             r = check_rights_response(req)
             assert r.section == expected_section
 
@@ -109,25 +119,34 @@ class TestCheckRightsResponse:
 # Sec 11(1)(a) — summary of personal data + processing activities
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec11_1_a:
     def test_pass_both_provided(self):
-        r = check_sec_11_1_a_summary(summary_provided=True, processing_activities_disclosed=True)
+        r = check_sec_11_1_a_summary(
+            summary_provided=True, processing_activities_disclosed=True
+        )
         assert r.compliant is True
         assert r.section == "Sec 11(1)(a)"
         assert "summary of personal data and processing activities provided" in r.reason
 
     def test_fail_summary_missing(self):
-        r = check_sec_11_1_a_summary(summary_provided=False, processing_activities_disclosed=True)
+        r = check_sec_11_1_a_summary(
+            summary_provided=False, processing_activities_disclosed=True
+        )
         assert r.compliant is False
         assert "summary of personal data not provided" in r.reason
 
     def test_fail_activities_missing(self):
-        r = check_sec_11_1_a_summary(summary_provided=True, processing_activities_disclosed=False)
+        r = check_sec_11_1_a_summary(
+            summary_provided=True, processing_activities_disclosed=False
+        )
         assert r.compliant is False
         assert "processing activities not disclosed" in r.reason
 
     def test_fail_both_missing(self):
-        r = check_sec_11_1_a_summary(summary_provided=False, processing_activities_disclosed=False)
+        r = check_sec_11_1_a_summary(
+            summary_provided=False, processing_activities_disclosed=False
+        )
         assert r.compliant is False
         assert "summary of personal data not provided" in r.reason
         assert "processing activities not disclosed" in r.reason
@@ -137,20 +156,27 @@ class TestSec11_1_a:
 # Sec 11(1)(b) — identities of Fiduciaries/Processors
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec11_1_b_Identities:
     def test_pass_specific_identities_listed(self):
-        r = check_sec_11_1_b_identities(identities_listed=True, generic_third_party_label_used=False)
+        r = check_sec_11_1_b_identities(
+            identities_listed=True, generic_third_party_label_used=False
+        )
         assert r.compliant is True
         assert "specific identities" in r.reason
 
     def test_fail_no_identities_listed(self):
-        r = check_sec_11_1_b_identities(identities_listed=False, generic_third_party_label_used=False)
+        r = check_sec_11_1_b_identities(
+            identities_listed=False, generic_third_party_label_used=False
+        )
         assert r.compliant is False
         assert "not listed" in r.reason
 
     def test_fail_generic_label_used(self):
         """User asks for sub-processor names; Fiduciary lists 'third party partners'."""
-        r = check_sec_11_1_b_identities(identities_listed=True, generic_third_party_label_used=True)
+        r = check_sec_11_1_b_identities(
+            identities_listed=True, generic_third_party_label_used=True
+        )
         assert r.compliant is False
         assert "generic third-party label" in r.reason
 
@@ -158,6 +184,7 @@ class TestSec11_1_b_Identities:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 11(1)(b) — description of shared data
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestSec11_1_b_Description:
     def test_pass_description_provided(self):
@@ -175,6 +202,7 @@ class TestSec11_1_b_Description:
 # Sec 11(1)(c) — other prescribed information
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec11_1_c:
     def test_pass_other_info_provided(self):
         r = check_sec_11_1_c_other_info(other_prescribed_info_provided=True)
@@ -191,6 +219,7 @@ class TestSec11_1_c:
 # Sec 11(2) — law enforcement exemption
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec11_2:
     def test_pass_exemption_applies(self):
         """Bank shares data with CERT-In under directive; exemption valid."""
@@ -201,13 +230,16 @@ class TestSec11_2:
     def test_exemption_noted_even_when_not_authorised(self):
         """Voluntary sharing for marketing — exemption not available."""
         r = check_sec_11_2_law_enforcement_exemption(sharing_authorised_by_law=False)
-        assert r.compliant is True  # always compliant — this is a carve-out check, not a violation check
+        assert (
+            r.compliant is True
+        )  # always compliant — this is a carve-out check, not a violation check
         assert "exemption not available" in r.reason
 
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 11 master aggregator
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestSec11Master:
     def _all_pass_args(self):
@@ -266,19 +298,26 @@ class TestSec11Master:
 # Sec 12(1) — right to correction
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec12_1_Correction:
     def test_pass_correction_provided(self):
-        r = check_sec_12_1_correction(correction_requested=True, correction_provided=True)
+        r = check_sec_12_1_correction(
+            correction_requested=True, correction_provided=True
+        )
         assert r.compliant is True
         assert "correction of personal data provided" in r.reason
 
     def test_fail_correction_denied(self):
-        r = check_sec_12_1_correction(correction_requested=True, correction_provided=False)
+        r = check_sec_12_1_correction(
+            correction_requested=True, correction_provided=False
+        )
         assert r.compliant is False
         assert "requested but not provided" in r.reason
 
     def test_pass_not_requested(self):
-        r = check_sec_12_1_correction(correction_requested=False, correction_provided=False)
+        r = check_sec_12_1_correction(
+            correction_requested=False, correction_provided=False
+        )
         assert r.compliant is True
         assert "right not exercised" in r.reason
 
@@ -287,19 +326,26 @@ class TestSec12_1_Correction:
 # Sec 12(1) — right to completion
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec12_1_Completion:
     def test_pass_completion_provided(self):
-        r = check_sec_12_1_completion(completion_requested=True, completion_provided=True)
+        r = check_sec_12_1_completion(
+            completion_requested=True, completion_provided=True
+        )
         assert r.compliant is True
         assert "completion of incomplete personal data provided" in r.reason
 
     def test_fail_completion_denied(self):
-        r = check_sec_12_1_completion(completion_requested=True, completion_provided=False)
+        r = check_sec_12_1_completion(
+            completion_requested=True, completion_provided=False
+        )
         assert r.compliant is False
         assert "requested but not provided" in r.reason
 
     def test_pass_not_requested(self):
-        r = check_sec_12_1_completion(completion_requested=False, completion_provided=False)
+        r = check_sec_12_1_completion(
+            completion_requested=False, completion_provided=False
+        )
         assert r.compliant is True
         assert "right not exercised" in r.reason
 
@@ -307,6 +353,7 @@ class TestSec12_1_Completion:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 12(1) — right to updating
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestSec12_1_Updating:
     def test_pass_updating_provided(self):
@@ -329,6 +376,7 @@ class TestSec12_1_Updating:
 # Sec 12(1) — right to erasure
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec12_1_Erasure:
     def test_pass_erasure_carried_out(self):
         r = check_sec_12_1_erasure(erasure_requested=True, erasure_provided=True)
@@ -347,24 +395,30 @@ class TestSec12_1_Erasure:
 
     def test_pass_retention_required_by_law(self):
         r = check_sec_12_1_erasure(
-            erasure_requested=True, erasure_provided=False,
-            retention_required_by_law=True, retention_necessary_for_purpose=False,
+            erasure_requested=True,
+            erasure_provided=False,
+            retention_required_by_law=True,
+            retention_necessary_for_purpose=False,
         )
         assert r.compliant is True
         assert "retention required by law" in r.reason
 
     def test_pass_retention_necessary_for_purpose(self):
         r = check_sec_12_1_erasure(
-            erasure_requested=True, erasure_provided=False,
-            retention_required_by_law=False, retention_necessary_for_purpose=True,
+            erasure_requested=True,
+            erasure_provided=False,
+            retention_required_by_law=False,
+            retention_necessary_for_purpose=True,
         )
         assert r.compliant is True
         assert "retention necessary for specified purpose" in r.reason
 
     def test_fail_no_exception_applies(self):
         r = check_sec_12_1_erasure(
-            erasure_requested=True, erasure_provided=False,
-            retention_required_by_law=False, retention_necessary_for_purpose=False,
+            erasure_requested=True,
+            erasure_provided=False,
+            retention_required_by_law=False,
+            retention_necessary_for_purpose=False,
         )
         assert r.compliant is False
         assert "no lawful retention exception" in r.reason
@@ -374,10 +428,13 @@ class TestSec12_1_Erasure:
 # Sec 12(2)(a) — fiduciary correction duty
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec12_2_a:
     def test_pass_fiduciary_corrected_inaccurate_data(self):
         r = check_sec_12_2_a_correction_duty(
-            correction_requested=True, fiduciary_corrected=True, data_was_inaccurate_or_misleading=True,
+            correction_requested=True,
+            fiduciary_corrected=True,
+            data_was_inaccurate_or_misleading=True,
         )
         assert r.compliant is True
         assert "Fiduciary corrected" in r.reason
@@ -385,21 +442,27 @@ class TestSec12_2_a:
     def test_fail_fiduciary_refused_to_correct(self):
         """User requests email correction; Fiduciary refuses."""
         r = check_sec_12_2_a_correction_duty(
-            correction_requested=True, fiduciary_corrected=False, data_was_inaccurate_or_misleading=True,
+            correction_requested=True,
+            fiduciary_corrected=False,
+            data_was_inaccurate_or_misleading=True,
         )
         assert r.compliant is False
         assert "failed to correct" in r.reason
 
     def test_pass_not_requested(self):
         r = check_sec_12_2_a_correction_duty(
-            correction_requested=False, fiduciary_corrected=False, data_was_inaccurate_or_misleading=True,
+            correction_requested=False,
+            fiduciary_corrected=False,
+            data_was_inaccurate_or_misleading=True,
         )
         assert r.compliant is True
         assert "not requested" in r.reason
 
     def test_pass_data_not_inaccurate(self):
         r = check_sec_12_2_a_correction_duty(
-            correction_requested=True, fiduciary_corrected=False, data_was_inaccurate_or_misleading=False,
+            correction_requested=True,
+            fiduciary_corrected=False,
+            data_was_inaccurate_or_misleading=False,
         )
         assert r.compliant is True
         assert "not inaccurate or misleading" in r.reason
@@ -409,31 +472,40 @@ class TestSec12_2_a:
 # Sec 12(2)(b) — fiduciary completion duty
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec12_2_b:
     def test_pass_fiduciary_completed_incomplete_data(self):
         r = check_sec_12_2_b_completion_duty(
-            completion_requested=True, fiduciary_completed=True, data_was_incomplete=True,
+            completion_requested=True,
+            fiduciary_completed=True,
+            data_was_incomplete=True,
         )
         assert r.compliant is True
         assert "Fiduciary completed" in r.reason
 
     def test_fail_fiduciary_refused_to_complete(self):
         r = check_sec_12_2_b_completion_duty(
-            completion_requested=True, fiduciary_completed=False, data_was_incomplete=True,
+            completion_requested=True,
+            fiduciary_completed=False,
+            data_was_incomplete=True,
         )
         assert r.compliant is False
         assert "failed to complete" in r.reason
 
     def test_pass_not_requested(self):
         r = check_sec_12_2_b_completion_duty(
-            completion_requested=False, fiduciary_completed=False, data_was_incomplete=True,
+            completion_requested=False,
+            fiduciary_completed=False,
+            data_was_incomplete=True,
         )
         assert r.compliant is True
         assert "not requested" in r.reason
 
     def test_pass_data_not_incomplete(self):
         r = check_sec_12_2_b_completion_duty(
-            completion_requested=True, fiduciary_completed=False, data_was_incomplete=False,
+            completion_requested=True,
+            fiduciary_completed=False,
+            data_was_incomplete=False,
         )
         assert r.compliant is True
         assert "not incomplete" in r.reason
@@ -443,19 +515,26 @@ class TestSec12_2_b:
 # Sec 12(2)(c) — fiduciary updating duty
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec12_2_c:
     def test_pass_fiduciary_updated(self):
-        r = check_sec_12_2_c_updating_duty(updating_requested=True, fiduciary_updated=True)
+        r = check_sec_12_2_c_updating_duty(
+            updating_requested=True, fiduciary_updated=True
+        )
         assert r.compliant is True
         assert "Fiduciary updated" in r.reason
 
     def test_fail_fiduciary_refused_to_update(self):
-        r = check_sec_12_2_c_updating_duty(updating_requested=True, fiduciary_updated=False)
+        r = check_sec_12_2_c_updating_duty(
+            updating_requested=True, fiduciary_updated=False
+        )
         assert r.compliant is False
         assert "failed to update" in r.reason
 
     def test_pass_not_requested(self):
-        r = check_sec_12_2_c_updating_duty(updating_requested=False, fiduciary_updated=False)
+        r = check_sec_12_2_c_updating_duty(
+            updating_requested=False, fiduciary_updated=False
+        )
         assert r.compliant is True
         assert "not requested" in r.reason
 
@@ -464,11 +543,14 @@ class TestSec12_2_c:
 # Sec 12(3) — fiduciary erasure duty with exceptions
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec12_3:
     def test_pass_fiduciary_erased(self):
         r = check_sec_12_3_erasure_duty(
-            erasure_requested=True, fiduciary_erased=True,
-            retention_required_by_law=False, retention_necessary_for_purpose=False,
+            erasure_requested=True,
+            fiduciary_erased=True,
+            retention_required_by_law=False,
+            retention_necessary_for_purpose=False,
         )
         assert r.compliant is True
         assert "erased personal data on request" in r.reason
@@ -476,40 +558,50 @@ class TestSec12_3:
     def test_pass_retention_required_by_law(self):
         """User requests erasure; Fiduciary retains under Tax Act mandate."""
         r = check_sec_12_3_erasure_duty(
-            erasure_requested=True, fiduciary_erased=False,
-            retention_required_by_law=True, retention_necessary_for_purpose=False,
+            erasure_requested=True,
+            fiduciary_erased=False,
+            retention_required_by_law=True,
+            retention_necessary_for_purpose=False,
         )
         assert r.compliant is True
         assert "retention required by law" in r.reason
 
     def test_pass_retention_necessary_for_purpose(self):
         r = check_sec_12_3_erasure_duty(
-            erasure_requested=True, fiduciary_erased=False,
-            retention_required_by_law=False, retention_necessary_for_purpose=True,
+            erasure_requested=True,
+            fiduciary_erased=False,
+            retention_required_by_law=False,
+            retention_necessary_for_purpose=True,
         )
         assert r.compliant is True
         assert "retention necessary for specified purpose" in r.reason
 
     def test_fail_no_lawful_exception(self):
         r = check_sec_12_3_erasure_duty(
-            erasure_requested=True, fiduciary_erased=False,
-            retention_required_by_law=False, retention_necessary_for_purpose=False,
+            erasure_requested=True,
+            fiduciary_erased=False,
+            retention_required_by_law=False,
+            retention_necessary_for_purpose=False,
         )
         assert r.compliant is False
         assert "no lawful retention exception" in r.reason
 
     def test_pass_not_requested(self):
         r = check_sec_12_3_erasure_duty(
-            erasure_requested=False, fiduciary_erased=False,
-            retention_required_by_law=False, retention_necessary_for_purpose=False,
+            erasure_requested=False,
+            fiduciary_erased=False,
+            retention_required_by_law=False,
+            retention_necessary_for_purpose=False,
         )
         assert r.compliant is True
         assert "not requested" in r.reason
 
     def test_both_exceptions_true_erasure_not_done_still_compliant(self):
         r = check_sec_12_3_erasure_duty(
-            erasure_requested=True, fiduciary_erased=False,
-            retention_required_by_law=True, retention_necessary_for_purpose=True,
+            erasure_requested=True,
+            fiduciary_erased=False,
+            retention_required_by_law=True,
+            retention_necessary_for_purpose=True,
         )
         assert r.compliant is True
 
@@ -517,6 +609,7 @@ class TestSec12_3:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 12 master aggregator
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestSec12Master:
     def _all_pass_args(self):
@@ -546,7 +639,10 @@ class TestSec12Master:
         args["correction_provided"] = False
         r = check_sec_12(**args)
         assert r.compliant is False
-        assert "one or more Sec 12 correction/erasure obligations not satisfied" in r.reason
+        assert (
+            "one or more Sec 12 correction/erasure obligations not satisfied"
+            in r.reason
+        )
 
     def test_fail_erasure_denied_no_exception(self):
         args = self._all_pass_args()
@@ -557,10 +653,14 @@ class TestSec12Master:
     def test_pass_all_rights_unexercised(self):
         """No rights exercised — all duties are not triggered."""
         args = dict(
-            correction_requested=False, correction_provided=False,
-            completion_requested=False, completion_provided=False,
-            updating_requested=False, updating_provided=False,
-            erasure_requested=False, erasure_provided=False,
+            correction_requested=False,
+            correction_provided=False,
+            completion_requested=False,
+            completion_provided=False,
+            updating_requested=False,
+            updating_provided=False,
+            erasure_requested=False,
+            erasure_provided=False,
             data_was_inaccurate_or_misleading=False,
             data_was_incomplete=False,
             retention_required_by_law=False,
@@ -585,6 +685,7 @@ class TestSec12Master:
 # Sec 13(1) — grievance mechanism available
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec13_1:
     def test_pass_mechanism_available(self):
         r = check_sec_13_1_mechanism_available(mechanism_available=True)
@@ -601,9 +702,12 @@ class TestSec13_1:
 # Sec 13(2) — grievance response period
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec13_2:
     def test_pass_within_window(self):
-        req = _grievance_request(received_at_unix=1_000_000, responded_at_unix=1_000_000 + 10 * 86400)
+        req = _grievance_request(
+            received_at_unix=1_000_000, responded_at_unix=1_000_000 + 10 * 86400
+        )
         r = check_sec_13_2_response_period(req)
         assert r.compliant is True
         assert r.section == "Sec 13(2)"
@@ -611,7 +715,9 @@ class TestSec13_2:
 
     def test_fail_exceeds_window(self):
         """User raises grievance; Fiduciary takes 60 days."""
-        req = _grievance_request(received_at_unix=1_000_000, responded_at_unix=1_000_000 + 60 * 86400)
+        req = _grievance_request(
+            received_at_unix=1_000_000, responded_at_unix=1_000_000 + 60 * 86400
+        )
         r = check_sec_13_2_response_period(req)
         assert r.compliant is False
         assert "exceeds 30-day window" in r.reason
@@ -636,15 +742,20 @@ class TestSec13_2:
 # Sec 13(3) — exhaustion of internal grievance mechanism
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec13_3:
     def test_pass_filed_with_fiduciary_first(self):
-        r = check_sec_13_3_exhaustion_required(grievance_filed_with_fiduciary_first=True)
+        r = check_sec_13_3_exhaustion_required(
+            grievance_filed_with_fiduciary_first=True
+        )
         assert r.compliant is True
         assert "exhaustion requirement satisfied" in r.reason
 
     def test_fail_skipped_fiduciary(self):
         """User skips Fiduciary mechanism, goes straight to Board."""
-        r = check_sec_13_3_exhaustion_required(grievance_filed_with_fiduciary_first=False)
+        r = check_sec_13_3_exhaustion_required(
+            grievance_filed_with_fiduciary_first=False
+        )
         assert r.compliant is False
         assert "must exhaust internal grievance mechanism" in r.reason
 
@@ -653,27 +764,52 @@ class TestSec13_3:
 # Sec 13 master aggregator
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec13Master:
     def test_pass_all_obligations_satisfied(self):
-        req = _grievance_request(received_at_unix=1_000_000, responded_at_unix=1_000_000 + 10 * 86400)
-        r = check_sec_13(mechanism_available=True, request=req, grievance_filed_with_fiduciary_first=True)
+        req = _grievance_request(
+            received_at_unix=1_000_000, responded_at_unix=1_000_000 + 10 * 86400
+        )
+        r = check_sec_13(
+            mechanism_available=True,
+            request=req,
+            grievance_filed_with_fiduciary_first=True,
+        )
         assert r.compliant is True
         assert "all Sec 13 grievance-redressal obligations satisfied" in r.reason
         assert len(r.sub_results) == 3
 
     def test_fail_no_mechanism(self):
-        req = _grievance_request(received_at_unix=1_000_000, responded_at_unix=1_000_000 + 10 * 86400)
-        r = check_sec_13(mechanism_available=False, request=req, grievance_filed_with_fiduciary_first=True)
+        req = _grievance_request(
+            received_at_unix=1_000_000, responded_at_unix=1_000_000 + 10 * 86400
+        )
+        r = check_sec_13(
+            mechanism_available=False,
+            request=req,
+            grievance_filed_with_fiduciary_first=True,
+        )
         assert r.compliant is False
 
     def test_fail_late_response(self):
-        req = _grievance_request(received_at_unix=1_000_000, responded_at_unix=1_000_000 + 60 * 86400)
-        r = check_sec_13(mechanism_available=True, request=req, grievance_filed_with_fiduciary_first=True)
+        req = _grievance_request(
+            received_at_unix=1_000_000, responded_at_unix=1_000_000 + 60 * 86400
+        )
+        r = check_sec_13(
+            mechanism_available=True,
+            request=req,
+            grievance_filed_with_fiduciary_first=True,
+        )
         assert r.compliant is False
 
     def test_fail_skipped_fiduciary(self):
-        req = _grievance_request(received_at_unix=1_000_000, responded_at_unix=1_000_000 + 10 * 86400)
-        r = check_sec_13(mechanism_available=True, request=req, grievance_filed_with_fiduciary_first=False)
+        req = _grievance_request(
+            received_at_unix=1_000_000, responded_at_unix=1_000_000 + 10 * 86400
+        )
+        r = check_sec_13(
+            mechanism_available=True,
+            request=req,
+            grievance_filed_with_fiduciary_first=False,
+        )
         assert r.compliant is False
 
     def test_invalid_input_not_rights_request(self):
@@ -681,8 +817,14 @@ class TestSec13Master:
             check_sec_13(True, "not-a-request", True)  # type: ignore[arg-type]
 
     def test_all_three_fail(self):
-        req = _grievance_request(received_at_unix=1_000_000, responded_at_unix=1_000_000 + 60 * 86400)
-        r = check_sec_13(mechanism_available=False, request=req, grievance_filed_with_fiduciary_first=False)
+        req = _grievance_request(
+            received_at_unix=1_000_000, responded_at_unix=1_000_000 + 60 * 86400
+        )
+        r = check_sec_13(
+            mechanism_available=False,
+            request=req,
+            grievance_filed_with_fiduciary_first=False,
+        )
         assert r.compliant is False
         assert len(r.sub_results) == 3
 
@@ -691,30 +833,40 @@ class TestSec13Master:
 # Sec 14(1) — nomination
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec14_1:
     def test_pass_nominee_designated_in_prescribed_manner(self):
-        r = check_sec_14_1_nomination(nominee_designated=True, manner_prescribed_followed=True)
+        r = check_sec_14_1_nomination(
+            nominee_designated=True, manner_prescribed_followed=True
+        )
         assert r.compliant is True
         assert "nominee designated in prescribed manner" in r.reason
 
     def test_fail_no_nominee(self):
-        r = check_sec_14_1_nomination(nominee_designated=False, manner_prescribed_followed=False)
+        r = check_sec_14_1_nomination(
+            nominee_designated=False, manner_prescribed_followed=False
+        )
         assert r.compliant is False
         assert "no nominee designated" in r.reason
 
     def test_fail_prescribed_manner_not_followed(self):
-        r = check_sec_14_1_nomination(nominee_designated=True, manner_prescribed_followed=False)
+        r = check_sec_14_1_nomination(
+            nominee_designated=True, manner_prescribed_followed=False
+        )
         assert r.compliant is False
         assert "manner prescribed not followed" in r.reason
 
     def test_fail_both_false(self):
-        r = check_sec_14_1_nomination(nominee_designated=False, manner_prescribed_followed=True)
+        r = check_sec_14_1_nomination(
+            nominee_designated=False, manner_prescribed_followed=True
+        )
         assert r.compliant is False
 
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 14(2) — incapacity definition
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestSec14_2:
     def test_pass_incapacity_meets_definition(self):
@@ -732,11 +884,14 @@ class TestSec14_2:
 # Sec 14 master aggregator
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 class TestSec14Master:
     def test_pass_all_obligations_satisfied(self):
         """Nominee exercises rights after Data Principal's death with prescribed-manner nomination."""
         r = check_sec_14(
-            nominee_designated=True, manner_prescribed_followed=True, incapacity_meets_definition=True,
+            nominee_designated=True,
+            manner_prescribed_followed=True,
+            incapacity_meets_definition=True,
         )
         assert r.compliant is True
         assert "all Sec 14 nomination obligations satisfied" in r.reason
@@ -744,20 +899,26 @@ class TestSec14Master:
 
     def test_fail_no_nominee(self):
         r = check_sec_14(
-            nominee_designated=False, manner_prescribed_followed=False, incapacity_meets_definition=True,
+            nominee_designated=False,
+            manner_prescribed_followed=False,
+            incapacity_meets_definition=True,
         )
         assert r.compliant is False
         assert "one or more Sec 14 nomination obligations not satisfied" in r.reason
 
     def test_fail_incapacity_not_met(self):
         r = check_sec_14(
-            nominee_designated=True, manner_prescribed_followed=True, incapacity_meets_definition=False,
+            nominee_designated=True,
+            manner_prescribed_followed=True,
+            incapacity_meets_definition=False,
         )
         assert r.compliant is False
 
     def test_fail_both(self):
         r = check_sec_14(
-            nominee_designated=False, manner_prescribed_followed=False, incapacity_meets_definition=False,
+            nominee_designated=False,
+            manner_prescribed_followed=False,
+            incapacity_meets_definition=False,
         )
         assert r.compliant is False
 
@@ -765,6 +926,7 @@ class TestSec14Master:
 # ═══════════════════════════════════════════════════════════════════════════
 # Realistic scenario tests
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestRealisticScenarios:
     def test_user_asks_subprocessor_names_generic_label_fails(self):
@@ -779,7 +941,11 @@ class TestRealisticScenarios:
             sharing_authorised_by_law=False,
         )
         assert r.compliant is False
-        id_result = [s for s in r.sub_results if s.section == "Sec 11(1)(b)" and "generic" in s.reason]
+        id_result = [
+            s
+            for s in r.sub_results
+            if s.section == "Sec 11(1)(b)" and "generic" in s.reason
+        ]
         assert len(id_result) >= 1
 
     def test_bank_shares_with_cert_in_exemption(self):
@@ -798,41 +964,53 @@ class TestRealisticScenarios:
     def test_user_requests_email_correction_fiduciary_refuses(self):
         """User requests email correction; Fiduciary refuses."""
         r = check_sec_12_2_a_correction_duty(
-            correction_requested=True, fiduciary_corrected=False, data_was_inaccurate_or_misleading=True,
+            correction_requested=True,
+            fiduciary_corrected=False,
+            data_was_inaccurate_or_misleading=True,
         )
         assert r.compliant is False
 
     def test_user_requests_erasure_tax_act_retention(self):
         """User requests erasure; Fiduciary retains under Tax Act mandate."""
         r = check_sec_12_3_erasure_duty(
-            erasure_requested=True, fiduciary_erased=False,
-            retention_required_by_law=True, retention_necessary_for_purpose=False,
+            erasure_requested=True,
+            fiduciary_erased=False,
+            retention_required_by_law=True,
+            retention_necessary_for_purpose=False,
         )
         assert r.compliant is True
 
     def test_user_grievance_60_days_late(self):
         """User raises grievance; Fiduciary takes 60 days."""
-        req = _grievance_request(received_at_unix=1_000_000, responded_at_unix=1_000_000 + 60 * 86400)
+        req = _grievance_request(
+            received_at_unix=1_000_000, responded_at_unix=1_000_000 + 60 * 86400
+        )
         r = check_sec_13_2_response_period(req)
         assert r.compliant is False
 
     def test_user_skips_fiduciary_goes_to_board(self):
         """User skips Fiduciary mechanism, goes straight to Board."""
-        r = check_sec_13_3_exhaustion_required(grievance_filed_with_fiduciary_first=False)
+        r = check_sec_13_3_exhaustion_required(
+            grievance_filed_with_fiduciary_first=False
+        )
         assert r.compliant is False
 
     def test_nominee_exercises_rights_after_death(self):
         """Nominee exercises rights after Data Principal's death with prescribed-manner nomination."""
         r = check_sec_14(
-            nominee_designated=True, manner_prescribed_followed=True, incapacity_meets_definition=True,
+            nominee_designated=True,
+            manner_prescribed_followed=True,
+            incapacity_meets_definition=True,
         )
         assert r.compliant is True
 
     def test_erasure_denied_for_internal_analytics_fails(self):
         """'Internal analytics' doesn't qualify as retention-necessary-for-purpose."""
         r = check_sec_12_3_erasure_duty(
-            erasure_requested=True, fiduciary_erased=False,
-            retention_required_by_law=False, retention_necessary_for_purpose=False,
+            erasure_requested=True,
+            fiduciary_erased=False,
+            retention_required_by_law=False,
+            retention_necessary_for_purpose=False,
         )
         assert r.compliant is False
         assert "no lawful retention exception" in r.reason
@@ -841,6 +1019,7 @@ class TestRealisticScenarios:
 # ═══════════════════════════════════════════════════════════════════════════
 # InvalidInputError tests for public functions
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 class TestInvalidInputErrors:
     """Spot-check InvalidInputError on key public functions that take non-primitive args."""

@@ -27,7 +27,9 @@ _DUTY_PENALTY_CAP_INR = 10_000
 def check_sec_15_a(complies_with_applicable_laws: bool) -> ComplianceResult:
     """Sec 15(a) — Data Principal shall comply with all applicable laws while exercising rights."""
     if not isinstance(complies_with_applicable_laws, bool):
-        raise InvalidInputError("complies_with_applicable_laws must be bool", section="Sec 15(a)")
+        raise InvalidInputError(
+            "complies_with_applicable_laws must be bool", section="Sec 15(a)"
+        )
 
     if complies_with_applicable_laws:
         return ComplianceResult(
@@ -72,19 +74,23 @@ def check_sec_15_c(duty: DataPrincipalDuty) -> ComplianceResult:
     breaches: list[ComplianceResult] = []
 
     if duty.submitted_false_particulars:
-        breaches.append(ComplianceResult(
-            compliant=False,
-            section="Sec 15(c)",
-            reason=f"submitted false particulars — Sec 15(c) breach, penalty up to ₹{_DUTY_PENALTY_CAP_INR:,}",
-            citation="DPDP Act 2023, Sec 15(c)",
-        ))
+        breaches.append(
+            ComplianceResult(
+                compliant=False,
+                section="Sec 15(c)",
+                reason=f"submitted false particulars — Sec 15(c) breach, penalty up to ₹{_DUTY_PENALTY_CAP_INR:,}",
+                citation="DPDP Act 2023, Sec 15(c)",
+            )
+        )
     if duty.suppressed_material_information:
-        breaches.append(ComplianceResult(
-            compliant=False,
-            section="Sec 15(c)",
-            reason=f"suppressed material information — Sec 15(c) breach, penalty up to ₹{_DUTY_PENALTY_CAP_INR:,}",
-            citation="DPDP Act 2023, Sec 15(c)",
-        ))
+        breaches.append(
+            ComplianceResult(
+                compliant=False,
+                section="Sec 15(c)",
+                reason=f"suppressed material information — Sec 15(c) breach, penalty up to ₹{_DUTY_PENALTY_CAP_INR:,}",
+                citation="DPDP Act 2023, Sec 15(c)",
+            )
+        )
 
     if not breaches:
         return ComplianceResult(
@@ -111,19 +117,23 @@ def check_sec_15_d(duty: DataPrincipalDuty) -> ComplianceResult:
     breaches: list[ComplianceResult] = []
 
     if duty.filed_frivolous_grievance:
-        breaches.append(ComplianceResult(
-            compliant=False,
-            section="Sec 15(d)",
-            reason=f"frivolous grievance — Sec 15(d) breach, penalty up to ₹{_DUTY_PENALTY_CAP_INR:,}",
-            citation="DPDP Act 2023, Sec 15(d)",
-        ))
+        breaches.append(
+            ComplianceResult(
+                compliant=False,
+                section="Sec 15(d)",
+                reason=f"frivolous grievance — Sec 15(d) breach, penalty up to ₹{_DUTY_PENALTY_CAP_INR:,}",
+                citation="DPDP Act 2023, Sec 15(d)",
+            )
+        )
     if duty.filed_false_complaint:
-        breaches.append(ComplianceResult(
-            compliant=False,
-            section="Sec 15(d)",
-            reason=f"false complaint — Sec 15(d) breach, penalty up to ₹{_DUTY_PENALTY_CAP_INR:,}",
-            citation="DPDP Act 2023, Sec 15(d)",
-        ))
+        breaches.append(
+            ComplianceResult(
+                compliant=False,
+                section="Sec 15(d)",
+                reason=f"false complaint — Sec 15(d) breach, penalty up to ₹{_DUTY_PENALTY_CAP_INR:,}",
+                citation="DPDP Act 2023, Sec 15(d)",
+            )
+        )
 
     if not breaches:
         return ComplianceResult(
@@ -142,10 +152,15 @@ def check_sec_15_d(duty: DataPrincipalDuty) -> ComplianceResult:
     )
 
 
-def check_sec_15_e(furnishes_verifiably_authentic_information: bool) -> ComplianceResult:
+def check_sec_15_e(
+    furnishes_verifiably_authentic_information: bool,
+) -> ComplianceResult:
     """Sec 15(e) — Data Principal shall furnish only verifiably authentic information for correction/erasure."""
     if not isinstance(furnishes_verifiably_authentic_information, bool):
-        raise InvalidInputError("furnishes_verifiably_authentic_information must be bool", section="Sec 15(e)")
+        raise InvalidInputError(
+            "furnishes_verifiably_authentic_information must be bool",
+            section="Sec 15(e)",
+        )
 
     if furnishes_verifiably_authentic_information:
         return ComplianceResult(

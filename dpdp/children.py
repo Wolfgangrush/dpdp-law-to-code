@@ -39,6 +39,7 @@ from dpdp.types import ChildRecord, ComplianceResult
 # Sec 9(1) — verifiable parental consent
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def check_parental_consent(record: ChildRecord) -> ComplianceResult:
     """Sec 9(1) — verifiable parental consent before processing child's personal data."""
     # delegated to DPDP Rules 2025 — manner prescribed
@@ -48,8 +49,11 @@ def check_parental_consent(record: ChildRecord) -> ComplianceResult:
     return ComplianceResult(
         compliant=record.has_verifiable_parental_consent,
         section="Sec 9(1)",
-        reason=("verifiable parental consent obtained" if record.has_verifiable_parental_consent
-                else "Sec 9(1) requires verifiable parental consent before processing a child's personal data"),
+        reason=(
+            "verifiable parental consent obtained"
+            if record.has_verifiable_parental_consent
+            else "Sec 9(1) requires verifiable parental consent before processing a child's personal data"
+        ),
         citation="DPDP Act 2023, Sec 9(1)",
     )
 
@@ -57,6 +61,7 @@ def check_parental_consent(record: ChildRecord) -> ComplianceResult:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 9(1) proviso — disability + lawful guardian
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_disability_proviso(
     record: ChildRecord,
@@ -80,8 +85,11 @@ def check_disability_proviso(
     return ComplianceResult(
         compliant=record.has_verifiable_parental_consent,
         section="Sec 9(1) proviso",
-        reason=("verifiable lawful guardian consent obtained" if record.has_verifiable_parental_consent
-                else "Sec 9(1) proviso requires verifiable consent of lawful guardian for persons with disability"),
+        reason=(
+            "verifiable lawful guardian consent obtained"
+            if record.has_verifiable_parental_consent
+            else "Sec 9(1) proviso requires verifiable consent of lawful guardian for persons with disability"
+        ),
         citation="DPDP Act 2023, Sec 9(1) proviso",
     )
 
@@ -89,6 +97,7 @@ def check_disability_proviso(
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 9(2) — no detrimental effect on child's well-being
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_detrimental_effect(record: ChildRecord) -> ComplianceResult:
     """Sec 9(2) — no processing likely to cause detrimental effect on child's well-being."""
@@ -98,8 +107,11 @@ def check_detrimental_effect(record: ChildRecord) -> ComplianceResult:
     return ComplianceResult(
         compliant=not record.is_likely_to_cause_detrimental_effect,
         section="Sec 9(2)",
-        reason=("processing not detrimental to child's well-being" if not record.is_likely_to_cause_detrimental_effect
-                else "Sec 9(2) prohibits processing likely to cause any detrimental effect on a child's well-being"),
+        reason=(
+            "processing not detrimental to child's well-being"
+            if not record.is_likely_to_cause_detrimental_effect
+            else "Sec 9(2) prohibits processing likely to cause any detrimental effect on a child's well-being"
+        ),
         citation="DPDP Act 2023, Sec 9(2)",
     )
 
@@ -107,6 +119,7 @@ def check_detrimental_effect(record: ChildRecord) -> ComplianceResult:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 9(3) — no behavioural tracking of children
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_tracking_prohibition(record: ChildRecord) -> ComplianceResult:
     """Sec 9(3) — no tracking or behavioural monitoring of children."""
@@ -116,8 +129,11 @@ def check_tracking_prohibition(record: ChildRecord) -> ComplianceResult:
     return ComplianceResult(
         compliant=not record.is_tracking_behavior,
         section="Sec 9(3)",
-        reason=("no tracking or behavioural monitoring" if not record.is_tracking_behavior
-                else "Sec 9(3) prohibits tracking or behavioural monitoring of children"),
+        reason=(
+            "no tracking or behavioural monitoring"
+            if not record.is_tracking_behavior
+            else "Sec 9(3) prohibits tracking or behavioural monitoring of children"
+        ),
         citation="DPDP Act 2023, Sec 9(3)",
     )
 
@@ -125,6 +141,7 @@ def check_tracking_prohibition(record: ChildRecord) -> ComplianceResult:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 9(3) — no targeted advertising directed at children
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_targeted_ads_prohibition(record: ChildRecord) -> ComplianceResult:
     """Sec 9(3) — no targeted advertising directed at children."""
@@ -134,8 +151,11 @@ def check_targeted_ads_prohibition(record: ChildRecord) -> ComplianceResult:
     return ComplianceResult(
         compliant=not record.is_targeted_advertising,
         section="Sec 9(3)",
-        reason=("no targeted advertising directed at children" if not record.is_targeted_advertising
-                else "Sec 9(3) prohibits targeted advertising directed at children"),
+        reason=(
+            "no targeted advertising directed at children"
+            if not record.is_targeted_advertising
+            else "Sec 9(3) prohibits targeted advertising directed at children"
+        ),
         citation="DPDP Act 2023, Sec 9(3)",
     )
 
@@ -143,6 +163,7 @@ def check_targeted_ads_prohibition(record: ChildRecord) -> ComplianceResult:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 9(4) — Central Govt class/purpose exemption
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_class_exemption(record: ChildRecord) -> ComplianceResult:
     """Sec 9(4) — Central Govt may exempt classes of Data Fiduciaries or purposes from 9(1) and 9(3)."""
@@ -168,6 +189,7 @@ def check_class_exemption(record: ChildRecord) -> ComplianceResult:
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 9(5) — Central Govt may notify lowered age threshold
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_age_threshold_exemption(
     record: ChildRecord,
@@ -198,6 +220,7 @@ def check_age_threshold_exemption(
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 9 — master compliance check
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def check_child_processing(
     record: ChildRecord,
@@ -230,11 +253,13 @@ def check_child_processing(
 
     sub.append(check_parental_consent(record))
 
-    sub.append(check_disability_proviso(
-        record,
-        is_person_with_disability=is_person_with_disability,
-        has_lawful_guardian=has_lawful_guardian,
-    ))
+    sub.append(
+        check_disability_proviso(
+            record,
+            is_person_with_disability=is_person_with_disability,
+            has_lawful_guardian=has_lawful_guardian,
+        )
+    )
 
     sub.append(check_detrimental_effect(record))
 
@@ -243,18 +268,24 @@ def check_child_processing(
         sub.append(check_tracking_prohibition(record))
         sub.append(check_targeted_ads_prohibition(record))
     else:
-        sub.append(check_age_threshold_exemption(
-            record,
-            age_lowered_by_notification=True,
-        ))
+        sub.append(
+            check_age_threshold_exemption(
+                record,
+                age_lowered_by_notification=True,
+            )
+        )
 
     all_pass = all(r.compliant for r in sub)
     failed = [r for r in sub if not r.compliant]
     return ComplianceResult(
         compliant=all_pass,
         section="Sec 9",
-        reason=("all Sec 9 child-processing requirements satisfied" if all_pass
-                else f"{len(failed)} Sec 9 requirement(s) failed: " + "; ".join(r.reason for r in failed)),
+        reason=(
+            "all Sec 9 child-processing requirements satisfied"
+            if all_pass
+            else f"{len(failed)} Sec 9 requirement(s) failed: "
+            + "; ".join(r.reason for r in failed)
+        ),
         citation="DPDP Act 2023, Sec 9",
         sub_results=sub,
     )

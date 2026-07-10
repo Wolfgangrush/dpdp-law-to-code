@@ -5,7 +5,6 @@ from __future__ import annotations
 import pytest
 
 from dpdp.cross_border import (
-    _NOTIFIED_RESTRICTED_COUNTRIES,
     check_cross_border_transfer,
     check_sec_16_1_negative_list,
     check_sec_16_2_sectoral_law,

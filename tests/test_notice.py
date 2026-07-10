@@ -45,6 +45,7 @@ def _good_legacy() -> LegacyNoticeRecord:
 # Sec 5(1)(i) — notice describes personal data and purpose
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_sec5_1_i_pass():
     r = check_notice_describes_data(_good_notice())
     assert r.compliant is True
@@ -107,6 +108,7 @@ def test_sec5_1_i_invalid_input():
 # Sec 5(1)(ii) — notice describes manner of exercising rights
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_sec5_1_ii_pass():
     r = check_notice_rights_exercise(_good_notice())
     assert r.compliant is True
@@ -136,6 +138,7 @@ def test_sec5_1_ii_invalid_input():
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 5(1)(iii) — notice describes manner of complaint to Board
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_sec5_1_iii_pass():
     r = check_notice_board_complaint(_good_notice())
@@ -167,6 +170,7 @@ def test_sec5_1_iii_invalid_input():
 # Sec 5(1) — timing: notice before or at consent request
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_sec5_1_timing_pass():
     r = check_notice_timing(_good_notice())
     assert r.compliant is True
@@ -183,7 +187,11 @@ def test_sec5_1_timing_fail():
     )
     r = check_notice_timing(n)
     assert r.compliant is False
-    assert "before" in r.reason.lower() or "accompany" in r.reason.lower() or "precede" in r.reason.lower()
+    assert (
+        "before" in r.reason.lower()
+        or "accompany" in r.reason.lower()
+        or "precede" in r.reason.lower()
+    )
 
 
 def test_sec5_1_timing_invalid_input():
@@ -195,6 +203,7 @@ def test_sec5_1_timing_invalid_input():
 # ═══════════════════════════════════════════════════════════════════════════
 # Sec 5(3) — language requirement
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_sec5_3_pass():
     r = check_notice_language(_good_notice())
@@ -224,6 +233,7 @@ def test_sec5_3_invalid_input():
 # ═══════════════════════════════════════════════════════════════════════════
 # Master check_notice — Sec 5(1)-(3) aggregator
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def test_check_notice_all_pass():
     r = check_notice(_good_notice())
@@ -270,11 +280,14 @@ def test_check_notice_invalid_input():
 # Sec 5(2) — legacy-data notice
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def test_sec5_2_pass():
     r = check_legacy_notice(_good_legacy())
     assert r.compliant is True
     assert r.section == "Sec 5(2)"
-    assert len(r.sub_results) == 7  # data, purpose, rights, complaint, commencement-timing, reasonable-time, language
+    assert (
+        len(r.sub_results) == 7
+    )  # data, purpose, rights, complaint, commencement-timing, reasonable-time, language
 
 
 def test_sec5_2_fail_missing_ingredients():
@@ -307,7 +320,9 @@ def test_sec5_2_fail_not_after_commencement():
     )
     r = check_legacy_notice(leg)
     assert r.compliant is False
-    assert any("commencement" in s.reason.lower() for s in r.sub_results if not s.compliant)
+    assert any(
+        "commencement" in s.reason.lower() for s in r.sub_results if not s.compliant
+    )
 
 
 def test_sec5_2_fail_not_reasonable_time():
@@ -322,7 +337,11 @@ def test_sec5_2_fail_not_reasonable_time():
     )
     r = check_legacy_notice(leg)
     assert r.compliant is False
-    assert any("reasonably practicable" in s.reason.lower() for s in r.sub_results if not s.compliant)
+    assert any(
+        "reasonably practicable" in s.reason.lower()
+        for s in r.sub_results
+        if not s.compliant
+    )
 
 
 def test_sec5_2_fail_language():
