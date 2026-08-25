@@ -296,7 +296,9 @@ Bar Council of India Rule 36 considerations: this is a free, open-source, MIT-li
 
 ## License
 
-MIT. See `LICENSE`.
+MIT. See [`LICENSE`](LICENSE) for the full licence text, and
+[`NOTICE.md`](NOTICE.md) for the not-legal-advice and Bar Council of India
+Rule 36 notices.
 
 ---
 
